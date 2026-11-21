@@ -2,6 +2,8 @@
 
 A pocket modular synthesizer for iPhone (PWA). Patch Eurorack-style modules with cables, play them, and tap **?** to learn what everything does.
 
+**▶ Open the app: [theis666.github.io/modular-sandbox](https://theis666.github.io/modular-sandbox/)** (in Safari on the iPhone: Share → Add to Home Screen for full screen and offline use). At iPhone size on a desktop: [phone frame](https://theis666.github.io/modular-sandbox/tools/phone-frame.html).
+
 - What it does and why: [SPEC.md](SPEC.md), [GLOSSARY.md](GLOSSARY.md), [docs/adr/](docs/adr/), [ROADMAP.md](ROADMAP.md)
 - No build step: plain HTML/CSS/JS. Open `index.html` through any static web server.
 
@@ -11,9 +13,9 @@ A pocket modular synthesizer for iPhone (PWA). Patch Eurorack-style modules with
 python3 -m http.server 8765
 ```
 
-Then open http://localhost:8765. On a desktop, the keys `A W S E D F T G Y H U J K` play notes.
+Then open `http://localhost:8765` in the browser. On a desktop, the keys `A W S E D F T G Y H U J K` play notes.
 
-To see the app at iPhone size in a desktop browser, open http://localhost:8765/tools/phone-frame.html (390 × 844, scaled to fit the window), or add `?landscape` for the turned phone (844 × 390). Chrome's own device mode (DevTools → Cmd+Shift+M) works too.
+To see the app at iPhone size in a desktop browser, open `http://localhost:8765/tools/phone-frame.html` (390 × 844, scaled to fit the window), or add `?landscape` for the turned phone (844 × 390). Chrome's own device mode (DevTools → Cmd+Shift+M) works too.
 
 To check that old patches still sound the same, run `await (await import('/tools/render-tests.js')).check()` in the console (open the app with `?mute` to keep it quiet).
 
