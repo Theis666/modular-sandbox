@@ -1535,7 +1535,20 @@ const ear = initEar({
 $('#guideBtn').onclick = () => guide.chooser();
 // in the background (other app, other tab, screen off) the audio stops computing, unless a recording runs;
 // it starts again when the app comes back (engine.js)
-document.addEventListener('visibilitychange', () => { if (document.hidden && engine.ctx && !S.recorder && engine.ctx.state === 'running') engine.ctx.suspend(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && engine.ctx && !S.recorder && engine.ctx.state === 'running') engine.ctx.suspend();
+  if (!document.hidden) setTimeout(soundCheck, 600); // back in front: did the sound come back by itself?
+});
+// When the phone stopped the sound and it did not come back on its own, say how to get it back;
+// the next touch anywhere restarts it (engine.js) and the hint goes away.
+const SILENT_MSG = 'The phone paused the sound. Tap anywhere to turn it back on.';
+function soundCheck() {
+  const st = engine.ctx && engine.ctx.state;
+  if (!st || document.hidden) return;
+  if (st !== 'running') { S.silentHint = true; toast(SILENT_MSG); }
+  else if (S.silentHint) { S.silentHint = false; if ($('#toast').textContent === SILENT_MSG) toast(''); }
+}
+engine.onState = () => setTimeout(soundCheck, 300);
 // guide text that does not fit fades out at the bottom, so it is clear there is more to scroll
 const guidePanel = $('#guide');
 function updateFade() { const b = guidePanel.querySelector('.g-body'); if (b) b.classList.toggle('more-below', b.scrollHeight - b.scrollTop - b.clientHeight > 4); }

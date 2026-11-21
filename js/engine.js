@@ -40,9 +40,16 @@ export function startAudio() {
   master.connect(comp).connect(pre).connect(clip).connect(mute).connect(ctx.destination);
   engine.ctx = ctx; engine.master = master; engine.out = clip;
   engine.ready = loadWorklet(ctx);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && ctx.state !== 'running') ctx.resume();
-  });
+  // Keeping the sound on. iOS stops ("interrupts") web audio for calls, Siri, notification sounds,
+  // other apps playing, the lock screen or new headphones, and lets it start again only inside a touch.
+  // So: try when the app comes back, and again on every touch or key until it runs.
+  const wake = () => { if (ctx.state !== 'running' && ctx.state !== 'closed') ctx.resume().catch(() => {}); };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+  window.addEventListener('pageshow', wake);
+  window.addEventListener('focus', wake);
+  for (const t of ['touchend', 'pointerup', 'keydown']) document.addEventListener(t, wake, { capture: true, passive: true });
+  // the app shows a hint while the sound is stopped although the app is in front (see app.js, engine.onState)
+  ctx.addEventListener('statechange', () => { if (engine.onState) engine.onState(ctx.state); });
   return ctx;
 }
 
