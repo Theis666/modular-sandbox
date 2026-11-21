@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone frame</title>
+<!-- Dev helper: shows the app at iPhone size on a desktop browser.
+     Portrait:  http://localhost:8765/tools/phone-frame.html
+     Landscape: http://localhost:8765/tools/phone-frame.html?landscape -->
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #2a2c31; display: flex; justify-content: center; align-items: flex-start; font: 13px system-ui, sans-serif; color: #aaa; }
+  .phone { flex: none; margin-top: 12px; transform-origin: top center; width: 390px; height: 844px; border-radius: 44px; border: 12px solid #0b0b0c; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.5); background: #000; }
+  iframe { width: 390px; height: 844px; border: 0; display: block; }
+  p { position: fixed; top: 8px; left: 12px; margin: 0; }
+</style>
+</head>
+<body>
+<p id="label">iPhone size 390 × 844</p>
+<div class="phone"><iframe id="app" src="../index.html" allow="autoplay"></iframe></div>
+<script>
+  // ?landscape turns the phone sideways (844×390)
+  const land = location.search.includes('landscape'), W = land ? 844 : 390, H = land ? 390 : 844;
+  const phone = document.querySelector('.phone'), frame = document.querySelector('#app');
+  phone.style.width = frame.style.width = W + 'px'; phone.style.height = frame.style.height = H + 'px';
+  document.getElementById('label').textContent = `iPhone size ${W} × ${H}` + (land ? ' (landscape)' : '');
+  // shrink the whole phone to fit the window; the app inside still lays out at 390×844
+  const fit = () => { const s = Math.min(1, (innerHeight - 24) / (H + 24), (innerWidth - 24) / (W + 24)); document.querySelector('.phone').style.transform = `scale(${s})`; };
+  addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# macOS
+.DS_Store
+# local tooling (dev server config for Claude Code)
+.claude/
+# temporary test copies
+_bundle-test.html
+_frame-test.html

@@ -1,0 +1,553 @@
+{
+  "schemaVersion": "1.0",
+  "generated": "2026-11-19",
+  "language": "de",
+  "notes": "Patch-Daten für eine Modular-Synth-Lern-App. Jeder Parameter trägt 'provenance': 'source' = Wert stammt aus der genannten Quelle, 'inferred' = sinnvoller Default, ergänzt weil die Quelle keinen Wert nennt, 'raw' = Originalwert eines fremden Plugins, dessen Einheit unklar ist (nicht 1:1 übernehmen, sondern über 'value' gehen). Melodien und Original-Notenfolgen der Songs sind bewusst NICHT enthalten; die App liefert nur Klang + Lernpfad, Noten gibt der Nutzer selbst ein oder es werden neutrale Übungsmuster genutzt.",
+
+  "moduleTypes": {
+    "VCO":      { "desc": "Oszillator", "params": ["waveform (saw|square|pulse|triangle|sine)", "octave (int, Fußlage: 0 = 8')", "fineCents", "pulseWidth (0..1)", "level (0..1)"], "inputs": ["pitch", "fm", "pwm"], "outputs": ["out"] },
+    "SUB":      { "desc": "Sub-Oszillator, folgt einem VCO eine Oktave tiefer", "params": ["waveform", "level"], "inputs": ["pitch"], "outputs": ["out"] },
+    "NOISE":    { "desc": "Rauschgenerator", "params": ["color (white|pink)", "level"], "inputs": [], "outputs": ["out"] },
+    "LFO":      { "desc": "Niederfrequenz-Oszillator", "params": ["waveform (sine|triangle|square|saw|sampleHold|smoothRandom)", "rateHz", "depth"], "inputs": ["rate"], "outputs": ["out"] },
+    "MIXER":    { "desc": "Mischer", "params": ["level1..levelN (0..1)"], "inputs": ["in1..inN"], "outputs": ["out"] },
+    "VCF":      { "desc": "Filter", "params": ["mode (lp12|lp24|hp12|bp)", "cutoffHz", "resonance (0..1)", "envAmount (0..1)", "keyTrack (0..1)", "drive (0..1)"], "inputs": ["in", "cutoffMod", "envMod"], "outputs": ["out"] },
+    "VCA":      { "desc": "Verstärker", "params": ["gain (0..1)"], "inputs": ["in", "cv"], "outputs": ["out"] },
+    "ENV":      { "desc": "ADSR-Hüllkurve", "params": ["attackMs", "decayMs", "sustain (0..1)", "releaseMs", "amount (0..1)"], "inputs": ["gate"], "outputs": ["out"] },
+    "SEQ":      { "desc": "Step-Sequencer", "params": ["steps (int)", "bpm", "division (1/8, 1/16 ...)", "stepActive (bool[])", "stepPitch (Notennamen oder null)"], "inputs": ["clock", "reset"], "outputs": ["pitch", "gate"] },
+    "ARP":      { "desc": "Arpeggiator", "params": ["mode (up|down|upDown|downUp|random)", "division", "hold (bool)", "offset (int, Startnote im Akkord)"], "inputs": ["notes"], "outputs": ["pitch", "gate"] },
+    "KEYBOARD": { "desc": "MIDI-/Bildschirmtastatur (CV-Quelle)", "params": ["voices (int)", "unison (int)", "unisonDetuneCents"], "inputs": [], "outputs": ["pitch", "gate", "velocity", "modWheel"] },
+    "FM_OP":    { "desc": "FM-Operator (Sinus) im DX7-Stil", "params": ["ratio", "detune (-7..7)", "outputLevel (0..99)", "egRates [4] (0..99)", "egLevels [4] (0..99)", "velocitySens (0..7)", "rateScaling (0..7)", "feedback (0..7, nur Feedback-Operator)"], "inputs": ["mod", "gate", "pitch"], "outputs": ["out"] },
+    "CHORUS":   { "desc": "Chorus", "params": ["rateHz", "depth", "mix"], "inputs": ["in"], "outputs": ["out"] },
+    "DELAY":    { "desc": "Delay", "params": ["timeMs oder sync (z. B. '1/16')", "feedback (0..1)", "mix (0..1)"], "inputs": ["in"], "outputs": ["out"] },
+    "REVERB":   { "desc": "Hall (Typ: spring|plate|hall)", "params": ["type", "decayS", "mix"], "inputs": ["in"], "outputs": ["out"] },
+    "OUTPUT":   { "desc": "Hauptausgang", "params": ["pan (-1..1)", "level"], "inputs": ["in"], "outputs": [] }
+  },
+
+  "patches": [
+    {
+      "id": "i-feel-love-bass",
+      "title": "I Feel Love – Sequencer-Bass",
+      "artist": "Donna Summer / Giorgio Moroder",
+      "year": 1977,
+      "status": "partial",
+      "difficulty": 2,
+      "category": ["bass", "sequencer", "delay"],
+      "learningGoals": [
+        "Step-Sequencer mit Pausen-Steps programmieren",
+        "Filter-Hüllkurve für perkussiven Bass",
+        "Tempo-synchrones Delay füllt die Lücken zwischen den Noten (der 'Galopp')"
+      ],
+      "originalGear": ["Moog Modular (geliehen von Eberhard Schoener, bedient von Robby Wedel)"],
+      "history": [
+        "Moroder baute fast den ganzen Song auf dem Moog Modular: Bass, Snare und Hi-Hats.",
+        "Der Moog verstimmte sich ständig, deshalb wurde in Stücken von 20–30 Sekunden aufgenommen.",
+        "Die Bassline bekam ihren typischen Klang erst im Mix durch ein Delay."
+      ],
+      "voiceMode": "mono",
+      "tempoBpm": { "value": 125, "provenance": "source" },
+      "modules": [
+        { "id": "seq", "type": "SEQ", "params": {
+          "steps": { "value": 8, "provenance": "source" },
+          "bpm": { "value": 125, "provenance": "source" },
+          "division": { "value": "1/8", "provenance": "inferred" },
+          "stepActive": { "value": [true, false, true, false, true, false, true, false], "provenance": "source", "note": "Steps 2, 4, 6, 8 deaktiviert" },
+          "pitchSet": { "value": ["C2", "C3", "G2", "Bb2"], "provenance": "source", "note": "Moroder nennt im Interview 'zwei Cs, ein G und ein B'. Reihenfolge der Steps setzt der Nutzer selbst." }
+        }},
+        { "id": "vco1", "type": "VCO", "params": {
+          "waveform": { "value": "saw", "provenance": "inferred" },
+          "octave": { "value": 0, "provenance": "inferred" },
+          "fineCents": { "value": 0, "provenance": "inferred" }
+        }},
+        { "id": "vcf", "type": "VCF", "params": {
+          "mode": { "value": "lp24", "provenance": "inferred", "note": "Moog-Ladder-Charakter" },
+          "cutoffHz": { "value": 450, "provenance": "inferred" },
+          "resonance": { "value": 0.3, "provenance": "inferred" },
+          "envAmount": { "value": 0.6, "provenance": "inferred" }
+        }},
+        { "id": "envFilter", "type": "ENV", "params": {
+          "attackMs": { "value": 0, "provenance": "inferred" },
+          "decayMs": { "value": 150, "provenance": "inferred" },
+          "sustain": { "value": 0, "provenance": "inferred" },
+          "releaseMs": { "value": 80, "provenance": "inferred" }
+        }},
+        { "id": "envAmp", "type": "ENV", "params": {
+          "attackMs": { "value": 1, "provenance": "inferred" },
+          "decayMs": { "value": 180, "provenance": "inferred" },
+          "sustain": { "value": 0.2, "provenance": "inferred" },
+          "releaseMs": { "value": 60, "provenance": "inferred" }
+        }},
+        { "id": "vca", "type": "VCA", "params": { "gain": { "value": 1, "provenance": "inferred" } } },
+        { "id": "delay", "type": "DELAY", "params": {
+          "sync": { "value": "1/16", "provenance": "inferred", "note": "Bei 125 BPM = 120 ms. Fällt genau zwischen die Achtel und erzeugt den Galopp." },
+          "feedback": { "value": 0.2, "provenance": "inferred" },
+          "mix": { "value": 0.5, "provenance": "inferred" }
+        }},
+        { "id": "out", "type": "OUTPUT", "params": { "pan": { "value": 0.5, "provenance": "source", "note": "Computer Music routet das Delay auf Main Out 1R" } } }
+      ],
+      "connections": [
+        { "from": "seq.pitch", "to": "vco1.pitch", "kind": "cv" },
+        { "from": "seq.gate", "to": "envFilter.gate", "kind": "gate" },
+        { "from": "seq.gate", "to": "envAmp.gate", "kind": "gate" },
+        { "from": "vco1.out", "to": "vcf.in", "kind": "audio" },
+        { "from": "envFilter.out", "to": "vcf.envMod", "kind": "cv", "provenance": "source" },
+        { "from": "vcf.out", "to": "vca.in", "kind": "audio" },
+        { "from": "envAmp.out", "to": "vca.cv", "kind": "cv" },
+        { "from": "vca.out", "to": "delay.in", "kind": "audio", "provenance": "source" },
+        { "from": "delay.out", "to": "out.in", "kind": "audio", "provenance": "source" }
+      ],
+      "tutorialSteps": [
+        { "order": 1, "text": "Sequencer auf 8 Steps und 125 BPM stellen. Steps 2, 4, 6 und 8 ausschalten.", "focus": ["seq"] },
+        { "order": 2, "text": "Pitch des Sequencers an den Oszillator, Gate an beide Hüllkurven.", "focus": ["seq", "vco1", "envFilter", "envAmp"] },
+        { "order": 3, "text": "Säge durch das Tiefpassfilter. Die Filter-Hüllkurve kurz halten, damit jeder Ton 'ploppt'.", "focus": ["vcf", "envFilter"] },
+        { "order": 4, "text": "VCA-Ausgang ins Delay. Delay auf 1/16 synchronisieren und hören, wie die Wiederholungen die Pausen füllen.", "focus": ["delay"] }
+      ],
+      "referencePatches": [
+        { "title": "FeelLove Seq (.vcv)", "platform": "VCV Rack", "url": "https://community.vcvrack.com/t/giorgio-moroder-style-bass-and-sequencer/13792" }
+      ],
+      "sources": [
+        { "title": "MusicRadar/Computer Music – 40 greatest synth sounds No 3: I Feel Love", "url": "https://www.musicradar.com/news/donna-summer-i-fee-love-best-synth-sound", "usedFor": "Sequencer 8 Steps/125 BPM, Steps 2/4/6/8 aus, Hüllkurve→Filter, VCA→Delay→Out R" },
+        { "title": "Document Journal – Moroder Interview", "url": "https://documentjournal.com/2016/01/synth-pioneer-giorgio-moroder-on-the-big-moog-studio-54-and-basslines-with-deborah-harry", "usedFor": "Tonvorrat, Delay im Mix" },
+        { "title": "MusicRadar – Eno 'sound of the future'", "url": "https://www.musicradar.com/artists/one-day-in-berlin-eno-came-running-in-and-said-i-have-heard-the-sound-of-the-future-how-to-replicate-the-trailblazing-pulse-of-i-feel-love", "usedFor": "Historie" }
+      ]
+    },
+
+    {
+      "id": "oxygene-iv-lead",
+      "title": "Oxygene IV – Lead",
+      "artist": "Jean-Michel Jarre",
+      "year": 1976,
+      "status": "complete",
+      "difficulty": 3,
+      "category": ["lead", "envelopes", "fx"],
+      "learningGoals": [
+        "Zwei leicht verstimmte Oszillatoren für Schwebung",
+        "LFO als dezentes Vibrato auf die Tonhöhe",
+        "Sehr lange Release-Zeiten: der Klang reagiert darauf, wie lange Töne gehalten werden",
+        "Effektkette: Federhall vor Delay"
+      ],
+      "originalGear": ["ARP 2600", "EMS VCS3", "Eminent 310", "RMI Harmonic Synthesizer"],
+      "history": [
+        "Aufgenommen zu Hause in Jarres Küche, Spuren übereinander auf einem 8-Spur-Recorder.",
+        "Bearbeitung vor allem mit Bandecho und Gitarren-Pedalen.",
+        "Erreichte Platz 4 der britischen Single-Charts."
+      ],
+      "voiceMode": "mono",
+      "modules": [
+        { "id": "kbd", "type": "KEYBOARD", "params": { "voices": { "value": 1, "provenance": "inferred" } } },
+        { "id": "lfo", "type": "LFO", "params": {
+          "waveform": { "value": "triangle", "provenance": "inferred" },
+          "rateHz": { "value": 5, "provenance": "inferred" },
+          "depth": { "value": 0.05, "provenance": "source", "note": "Quelle: Freq-Mod-Regler nur leicht aufdrehen" }
+        }},
+        { "id": "vco1", "type": "VCO", "params": {
+          "waveform": { "value": "saw", "provenance": "source" },
+          "octave": { "value": -2, "provenance": "source", "note": "Range 32' (8' = 0)" },
+          "fineCents": { "value": -3, "provenance": "inferred", "raw": -0.03, "rawNote": "Voltage-Modular-Frequenzregler -0.03" }
+        }},
+        { "id": "vco2", "type": "VCO", "params": {
+          "waveform": { "value": "saw", "provenance": "source" },
+          "octave": { "value": -2, "provenance": "source" },
+          "fineCents": { "value": 3, "provenance": "inferred", "raw": 0.03 }
+        }},
+        { "id": "mix", "type": "MIXER", "params": {
+          "level1": { "value": 0.7, "provenance": "inferred", "note": "Quelle: Kanäle 1+2 'etwas absenken'" },
+          "level2": { "value": 0.7, "provenance": "inferred" }
+        }},
+        { "id": "vcf", "type": "VCF", "params": {
+          "mode": { "value": "lp24", "provenance": "source" },
+          "cutoffHz": { "value": 30, "provenance": "source" },
+          "resonance": { "value": 0.16, "provenance": "source" },
+          "envAmount": { "value": 0.95, "provenance": "source", "note": "Freq Mod 1 fast voll auf" }
+        }},
+        { "id": "envFilter", "type": "ENV", "params": {
+          "attackMs": { "value": 60, "provenance": "source" },
+          "decayMs": { "value": 2000, "provenance": "inferred" },
+          "sustain": { "value": 0.7, "provenance": "inferred" },
+          "releaseMs": { "value": 7000, "provenance": "source", "note": "Quelle: über 7000 ms" }
+        }},
+        { "id": "envAmp", "type": "ENV", "params": {
+          "attackMs": { "value": 65, "provenance": "source" },
+          "decayMs": { "value": 10000, "provenance": "source", "note": "Decay voll auf" },
+          "sustain": { "value": 1, "provenance": "inferred" },
+          "releaseMs": { "value": 2400, "provenance": "source" }
+        }},
+        { "id": "vca", "type": "VCA", "params": { "gain": { "value": 1, "provenance": "inferred" } } },
+        { "id": "reverb", "type": "REVERB", "params": {
+          "type": { "value": "spring", "provenance": "source" },
+          "decayS": { "value": 2.5, "provenance": "inferred" },
+          "mix": { "value": 0.3, "provenance": "inferred", "note": "Quelle: erst trocken, dann nach Geschmack" }
+        }},
+        { "id": "delay", "type": "DELAY", "params": {
+          "timeMs": { "value": 380, "provenance": "inferred" },
+          "feedback": { "value": 0.35, "provenance": "inferred" },
+          "mix": { "value": 0.25, "provenance": "inferred" }
+        }},
+        { "id": "out", "type": "OUTPUT", "params": { "pan": { "value": -0.5, "provenance": "source", "note": "Main Out 1L" } } }
+      ],
+      "connections": [
+        { "from": "kbd.pitch", "to": "vco1.pitch", "kind": "cv", "provenance": "source" },
+        { "from": "kbd.pitch", "to": "vco2.pitch", "kind": "cv", "provenance": "source" },
+        { "from": "kbd.gate", "to": "envFilter.gate", "kind": "gate", "provenance": "source" },
+        { "from": "kbd.gate", "to": "envAmp.gate", "kind": "gate", "provenance": "source" },
+        { "from": "lfo.out", "to": "vco1.fm", "kind": "cv", "provenance": "source" },
+        { "from": "lfo.out", "to": "vco2.fm", "kind": "cv", "provenance": "source" },
+        { "from": "vco1.out", "to": "mix.in1", "kind": "audio", "provenance": "source" },
+        { "from": "vco2.out", "to": "mix.in2", "kind": "audio", "provenance": "source" },
+        { "from": "mix.out", "to": "vcf.in", "kind": "audio", "provenance": "source" },
+        { "from": "envFilter.out", "to": "vcf.envMod", "kind": "cv", "provenance": "source" },
+        { "from": "vcf.out", "to": "vca.in", "kind": "audio", "provenance": "source" },
+        { "from": "envAmp.out", "to": "vca.cv", "kind": "cv", "provenance": "source" },
+        { "from": "vca.out", "to": "reverb.in", "kind": "audio", "provenance": "source" },
+        { "from": "reverb.out", "to": "delay.in", "kind": "audio", "provenance": "source" },
+        { "from": "delay.out", "to": "out.in", "kind": "audio", "provenance": "source" }
+      ],
+      "tutorialSteps": [
+        { "order": 1, "text": "Zwei Sägezahn-Oszillatoren auf 32' stellen und minimal gegeneinander verstimmen. Hör auf die Schwebung.", "focus": ["vco1", "vco2"] },
+        { "order": 2, "text": "LFO leicht auf beide Oszillatoren: dezentes Vibrato.", "focus": ["lfo"] },
+        { "order": 3, "text": "Filter fast ganz zu (ca. 30 Hz), die Hüllkurve öffnet es. Release über 7 Sekunden.", "focus": ["vcf", "envFilter"] },
+        { "order": 4, "text": "Kurze und lange Töne spielen: Der Klang verändert sich je nach Haltedauer.", "focus": ["envFilter", "envAmp"] },
+        { "order": 5, "text": "Federhall und Delay erst trocken, dann langsam dazumischen.", "focus": ["reverb", "delay"] }
+      ],
+      "sources": [
+        { "title": "MusicRadar/Computer Music – 40 greatest synth sounds No 5: Oxygene, Pt 4", "url": "https://www.musicradar.com/news/jean-michel-jarre-best-synth-sound", "usedFor": "Kompletter Patch in Voltage Modular Nucleus, Gear, Historie" }
+      ]
+    },
+
+    {
+      "id": "blade-runner-brass",
+      "title": "Blade Runner – Brass",
+      "artist": "Vangelis",
+      "year": 1982,
+      "status": "complete",
+      "difficulty": 3,
+      "category": ["brass", "pad", "filters", "fx"],
+      "learningGoals": [
+        "Hochpass und Tiefpass in Reihe",
+        "Zwei Hüllkurven auf denselben Filter-Cutoff",
+        "Großer Hall als Teil des Sounds"
+      ],
+      "originalGear": ["Yamaha CS-80", "Lexicon 224 (Hall)"],
+      "history": [
+        "Der Brass-Sound ist an sich einfach. Er lebt stark von Vangelis' Spiel und viel Hall.",
+        "Vangelis nutzte ab 1980 einen Lexicon 224 als Hall."
+      ],
+      "voiceMode": "poly",
+      "modules": [
+        { "id": "kbd", "type": "KEYBOARD", "params": {
+          "voices": { "value": 8, "provenance": "inferred", "note": "CS-80 ist 8-stimmig" }
+        }},
+        { "id": "vco1", "type": "VCO", "params": {
+          "waveform": { "value": "saw", "provenance": "source" },
+          "octave": { "value": -1, "provenance": "source" },
+          "fineCents": { "value": -3, "provenance": "inferred", "raw": -0.03, "rawNote": "Fathom CM Pitch Fine -0.03, Detune an" }
+        }},
+        { "id": "vco2", "type": "VCO", "params": {
+          "waveform": { "value": "saw", "provenance": "source" },
+          "octave": { "value": 0, "provenance": "source" },
+          "fineCents": { "value": 3, "provenance": "inferred", "raw": 0.03 }
+        }},
+        { "id": "mix", "type": "MIXER", "params": { "level1": { "value": 0.7, "provenance": "inferred" }, "level2": { "value": 0.7, "provenance": "inferred" } } },
+        { "id": "hpf", "type": "VCF", "params": {
+          "mode": { "value": "hp12", "provenance": "source" },
+          "cutoffHz": { "value": 120, "provenance": "inferred", "raw": 600, "rawNote": "Fathom CM Cutoff ca. 600, Einheit unklar" },
+          "resonance": { "value": 0.5, "provenance": "inferred", "raw": 1.9, "rawNote": "Fathom CM Resonanz knapp unter 1.90" }
+        }},
+        { "id": "lpf", "type": "VCF", "params": {
+          "mode": { "value": "lp24", "provenance": "source" },
+          "cutoffHz": { "value": 300, "provenance": "inferred", "raw": 24, "rawNote": "Fathom CM Cutoff 24" },
+          "resonance": { "value": 0.3, "provenance": "inferred", "raw": 0.64 },
+          "keyTrack": { "value": 0.27, "provenance": "source" }
+        }},
+        { "id": "env1", "type": "ENV", "params": {
+          "amount": { "value": 0.19, "provenance": "source" },
+          "attackMs": { "value": 200, "provenance": "source" },
+          "decayMs": { "value": 200, "provenance": "source" },
+          "sustain": { "value": 0.38, "provenance": "source" },
+          "releaseMs": { "value": 4000, "provenance": "source", "note": "Release fast voll" }
+        }},
+        { "id": "env2", "type": "ENV", "params": {
+          "amount": { "value": 1, "provenance": "source" },
+          "attackMs": { "value": 20, "provenance": "source" },
+          "decayMs": { "value": 200, "provenance": "source" },
+          "sustain": { "value": 0.73, "provenance": "source" },
+          "releaseMs": { "value": 232, "provenance": "source" }
+        }},
+        { "id": "envAmp", "type": "ENV", "params": {
+          "attackMs": { "value": 20, "provenance": "inferred" },
+          "decayMs": { "value": 200, "provenance": "inferred" },
+          "sustain": { "value": 0.9, "provenance": "inferred" },
+          "releaseMs": { "value": 1200, "provenance": "inferred" }
+        }},
+        { "id": "vca", "type": "VCA", "params": { "gain": { "value": 0.7, "provenance": "source", "note": "Quelle: Master-Volume absenken" } } },
+        { "id": "chorus", "type": "CHORUS", "params": {
+          "rateHz": { "value": 0.6, "provenance": "inferred" },
+          "depth": { "value": 0.6, "provenance": "inferred", "note": "Quelle: Depth und Feedback erhöhen" },
+          "mix": { "value": 0.5, "provenance": "inferred" }
+        }},
+        { "id": "reverb", "type": "REVERB", "params": {
+          "type": { "value": "hall", "provenance": "inferred" },
+          "decayS": { "value": 6, "provenance": "inferred", "note": "Quelle: Decay erhöhen" },
+          "mix": { "value": 0.45, "provenance": "inferred", "note": "Quelle: Wet-Anteil erhöhen" }
+        }},
+        { "id": "out", "type": "OUTPUT", "params": {} }
+      ],
+      "connections": [
+        { "from": "kbd.pitch", "to": "vco1.pitch", "kind": "cv" },
+        { "from": "kbd.pitch", "to": "vco2.pitch", "kind": "cv" },
+        { "from": "kbd.gate", "to": "env1.gate", "kind": "gate" },
+        { "from": "kbd.gate", "to": "env2.gate", "kind": "gate" },
+        { "from": "kbd.gate", "to": "envAmp.gate", "kind": "gate" },
+        { "from": "vco1.out", "to": "mix.in1", "kind": "audio", "provenance": "source" },
+        { "from": "vco2.out", "to": "mix.in2", "kind": "audio", "provenance": "source" },
+        { "from": "mix.out", "to": "hpf.in", "kind": "audio", "provenance": "source" },
+        { "from": "hpf.out", "to": "lpf.in", "kind": "audio", "provenance": "source" },
+        { "from": "env1.out", "to": "lpf.cutoffMod", "kind": "cv", "provenance": "source" },
+        { "from": "env2.out", "to": "lpf.cutoffMod", "kind": "cv", "provenance": "source" },
+        { "from": "lpf.out", "to": "vca.in", "kind": "audio" },
+        { "from": "envAmp.out", "to": "vca.cv", "kind": "cv" },
+        { "from": "vca.out", "to": "chorus.in", "kind": "audio", "provenance": "source" },
+        { "from": "chorus.out", "to": "reverb.in", "kind": "audio", "provenance": "source" },
+        { "from": "reverb.out", "to": "out.in", "kind": "audio", "provenance": "source" }
+      ],
+      "tutorialSteps": [
+        { "order": 1, "text": "Zwei Sägezähne, einer eine Oktave tiefer, beide minimal gegeneinander verstimmt.", "focus": ["vco1", "vco2"] },
+        { "order": 2, "text": "Erst Hochpass, dann Tiefpass: Der Hochpass nimmt Bauch weg, der Tiefpass formt den Brass-Ton.", "focus": ["hpf", "lpf"] },
+        { "order": 3, "text": "Zwei Hüllkurven auf den Cutoff: eine langsame, leichte und eine schnelle, volle für das 'Anblasen'.", "focus": ["env1", "env2"] },
+        { "order": 4, "text": "Chorus und viel Hall dazu. Pitch und Cutoff live mit Modwheel oder Aftertouch spielen.", "focus": ["chorus", "reverb"] }
+      ],
+      "sources": [
+        { "title": "MusicRadar – 40 greatest synth sounds No 1: Blade Runner", "url": "https://musicradar.com/news/blade-runner-best-synth-sound", "usedFor": "Kompletter Patch in Fathom CM" },
+        { "title": "Reverb Machine – Vangelis' Blade Runner Synth Sounds", "url": "https://reverbmachine.com/blog/vangelis-blade-runner-synth-sounds/", "usedFor": "Lexicon 224" }
+      ]
+    },
+
+    {
+      "id": "stranger-things-arp",
+      "title": "Stranger Things – Intro-Arpeggio",
+      "artist": "Kyle Dixon & Michael Stein",
+      "year": 2016,
+      "status": "complete",
+      "difficulty": 2,
+      "category": ["arp", "bass", "lfo", "filters"],
+      "learningGoals": [
+        "Arpeggiator über einen gehaltenen Akkord",
+        "Zufalls-LFO auf die Tonhöhe für 'analoges' Driften",
+        "Filter-Hüllkurve ohne Sustain für pluckende Töne"
+      ],
+      "originalGear": ["Roland SH-2"],
+      "history": ["Die arpeggierte Bassline des Intros entstand auf einem Roland SH-2."],
+      "voiceMode": "mono",
+      "tempoBpm": { "value": 84, "provenance": "source" },
+      "modules": [
+        { "id": "kbd", "type": "KEYBOARD", "params": {
+          "voices": { "value": 1, "provenance": "source" },
+          "unison": { "value": 2, "provenance": "source" },
+          "unisonDetuneCents": { "value": 8, "provenance": "inferred", "note": "Quelle: nach Geschmack" },
+          "heldChord": { "value": ["C3", "E3", "G3", "B3"], "provenance": "source", "note": "C-Dur 7" }
+        }},
+        { "id": "arp", "type": "ARP", "params": {
+          "mode": { "value": "downUp", "provenance": "source" },
+          "hold": { "value": true, "provenance": "source" },
+          "offset": { "value": 2, "provenance": "source", "note": "startet auf G" },
+          "division": { "value": "1/16", "provenance": "inferred" }
+        }},
+        { "id": "lfo1", "type": "LFO", "params": {
+          "waveform": { "value": "smoothRandom", "provenance": "source", "note": "Ableton Noise2 = kontinuierlicher Zufall" },
+          "rateHz": { "value": 0.5, "provenance": "source" },
+          "depth": { "value": 0.02, "provenance": "source" }
+        }},
+        { "id": "lfo2", "type": "LFO", "params": {
+          "waveform": { "value": "smoothRandom", "provenance": "source" },
+          "rateHz": { "value": 1.5, "provenance": "source" },
+          "depth": { "value": 0.05, "provenance": "source" }
+        }},
+        { "id": "vco1", "type": "VCO", "params": {
+          "waveform": { "value": "square", "provenance": "source" },
+          "octave": { "value": 0, "provenance": "source" },
+          "fineCents": { "value": 2, "provenance": "inferred", "raw": 0.02, "rawNote": "Ableton Analog Detune 0.02" }
+        }},
+        { "id": "vco2", "type": "VCO", "params": {
+          "waveform": { "value": "square", "provenance": "source" },
+          "octave": { "value": -1, "provenance": "source" },
+          "fineCents": { "value": -2, "provenance": "inferred", "raw": -0.02 }
+        }},
+        { "id": "sub", "type": "SUB", "params": {
+          "waveform": { "value": "square", "provenance": "inferred" },
+          "level": { "value": 0.7, "provenance": "source" }
+        }},
+        { "id": "mix", "type": "MIXER", "params": { "level1": { "value": 0.7, "provenance": "inferred" }, "level2": { "value": 0.7, "provenance": "inferred" }, "level3": { "value": 0.7, "provenance": "source" } } },
+        { "id": "vcf", "type": "VCF", "params": {
+          "mode": { "value": "lp12", "provenance": "source" },
+          "cutoffHz": { "value": 900, "provenance": "inferred", "note": "Quelle: Cutoff wird im Stück von Hand gefahren → als Live-Regler anbieten" },
+          "resonance": { "value": 0.25, "provenance": "source" },
+          "keyTrack": { "value": 0.5, "provenance": "inferred", "note": "Quelle: positiver Wert" },
+          "drive": { "value": 0.4, "provenance": "inferred", "note": "Ableton Drive Sym2" },
+          "envAmount": { "value": 0.6, "provenance": "inferred" }
+        }},
+        { "id": "envFilter", "type": "ENV", "params": {
+          "attackMs": { "value": 11, "provenance": "source" },
+          "decayMs": { "value": 900, "provenance": "source", "note": "Quelle: zwischen 500 und 1500 ms" },
+          "sustain": { "value": 0, "provenance": "source" },
+          "releaseMs": { "value": 900, "provenance": "inferred" }
+        }},
+        { "id": "envAmp", "type": "ENV", "params": {
+          "attackMs": { "value": 11, "provenance": "source" },
+          "decayMs": { "value": 900, "provenance": "inferred" },
+          "sustain": { "value": 0, "provenance": "source" },
+          "releaseMs": { "value": 900, "provenance": "inferred" }
+        }},
+        { "id": "vca", "type": "VCA", "params": { "gain": { "value": 1, "provenance": "inferred" } } },
+        { "id": "chorus", "type": "CHORUS", "params": {
+          "rateHz": { "value": 0.5, "provenance": "inferred" },
+          "depth": { "value": 0.5, "provenance": "inferred" },
+          "mix": { "value": 0.4, "provenance": "inferred", "note": "Quelle: Chorus ist ein großer Teil des 80er-Sounds" }
+        }},
+        { "id": "out", "type": "OUTPUT", "params": {} }
+      ],
+      "connections": [
+        { "from": "kbd.pitch", "to": "arp.notes", "kind": "cv" },
+        { "from": "arp.pitch", "to": "vco1.pitch", "kind": "cv" },
+        { "from": "arp.pitch", "to": "vco2.pitch", "kind": "cv" },
+        { "from": "arp.pitch", "to": "sub.pitch", "kind": "cv" },
+        { "from": "arp.gate", "to": "envFilter.gate", "kind": "gate" },
+        { "from": "arp.gate", "to": "envAmp.gate", "kind": "gate" },
+        { "from": "lfo1.out", "to": "vco1.fm", "kind": "cv", "provenance": "source" },
+        { "from": "lfo2.out", "to": "vco2.fm", "kind": "cv", "provenance": "source" },
+        { "from": "vco1.out", "to": "mix.in1", "kind": "audio" },
+        { "from": "vco2.out", "to": "mix.in2", "kind": "audio" },
+        { "from": "sub.out", "to": "mix.in3", "kind": "audio" },
+        { "from": "mix.out", "to": "vcf.in", "kind": "audio" },
+        { "from": "envFilter.out", "to": "vcf.envMod", "kind": "cv", "provenance": "source" },
+        { "from": "vcf.out", "to": "vca.in", "kind": "audio" },
+        { "from": "envAmp.out", "to": "vca.cv", "kind": "cv" },
+        { "from": "vca.out", "to": "chorus.in", "kind": "audio" },
+        { "from": "chorus.out", "to": "out.in", "kind": "audio" }
+      ],
+      "tutorialSteps": [
+        { "order": 1, "text": "C-Dur-7-Akkord halten, Arpeggiator auf DownUp mit Hold. Offset 2 lässt die Linie auf G starten.", "focus": ["kbd", "arp"] },
+        { "order": 2, "text": "Zwei Rechteck-Oszillatoren, einer eine Oktave tiefer, dazu ein Sub-Oszillator.", "focus": ["vco1", "vco2", "sub"] },
+        { "order": 3, "text": "Zwei langsame Zufalls-LFOs auf die Tonhöhe: Die Töne driften wie bei einem alten Analog-Synth.", "focus": ["lfo1", "lfo2"] },
+        { "order": 4, "text": "Filter- und Amp-Hüllkurve ohne Sustain: Jeder Ton klingt kurz aus.", "focus": ["envFilter", "envAmp"] },
+        { "order": 5, "text": "Cutoff live langsam aufziehen, so wie im Intro.", "focus": ["vcf"] }
+      ],
+      "sources": [
+        { "title": "Mixdown – How to recreate the Stranger Things intro theme", "url": "https://mixdownmag.com.au/features/how-to-recreate-and-play-the-iconic-stranger-things-intro-theme/", "usedFor": "Alle Parameter (Ableton Analog), SH-2" }
+      ]
+    },
+
+    {
+      "id": "dx7-epiano-1",
+      "title": "DX7 E.PIANO 1",
+      "artist": "Yamaha Werks-Preset (Whitney-Houston-Balladen, Twin Peaks u. v. m.)",
+      "year": 1983,
+      "status": "complete",
+      "difficulty": 4,
+      "category": ["fm", "keys"],
+      "learningGoals": [
+        "FM-Synthese: Carrier und Modulatoren",
+        "Algorithmus 5: drei Paare aus Modulator → Carrier",
+        "Hoher Frequenz-Ratio (14) erzeugt den glockigen Anschlag",
+        "Velocity-Empfindlichkeit der Modulatoren macht den Klang dynamisch"
+      ],
+      "originalGear": ["Yamaha DX7"],
+      "history": [
+        "Werks-Preset 11 des DX7, gilt als bekanntester Synth-Preset der 80er.",
+        "Laut einer Studie (Lavengood, 2019) 1986 auf 61 % der R&B-Nummer-eins-Hits."
+      ],
+      "voiceMode": "poly",
+      "fm": {
+        "algorithm": { "value": 5, "provenance": "source" },
+        "algorithmGraph": { "value": { "carriers": [1, 3, 5], "pairs": [[2, 1], [4, 3], [6, 5]], "feedbackOp": 6 }, "provenance": "source", "note": "Algorithmus 5: Op 2→1, 4→3, 6→5; Op 6 hat Feedback" },
+        "feedback": { "value": 6, "provenance": "source" },
+        "transpose": { "value": "C3", "provenance": "source" },
+        "oscKeySync": { "value": false, "provenance": "source" },
+        "lfo": { "value": { "wave": "sine", "speed": 15, "delay": 33, "pitchModDepth": 0, "ampModDepth": 0, "sync": false, "pitchModSens": 2 }, "provenance": "source" },
+        "pitchEnvelope": { "value": { "rates": [94, 67, 95, 60], "levels": [50, 50, 50, 50] }, "provenance": "source", "note": "Level 50 = neutral, also praktisch aus" },
+        "operators": { "provenance": "source", "note": "Alle im Ratio-Modus, AM-Sens 0, Rate Scaling 3", "value": [
+          { "op": 1, "role": "carrier",   "ratio": 1,  "detune": 3,  "egRates": [96, 25, 25, 67], "egLevels": [99, 75, 0, 0], "outputLevel": 99, "velocitySens": 2 },
+          { "op": 2, "role": "modulator", "ratio": 14, "detune": 0,  "egRates": [95, 50, 35, 78], "egLevels": [99, 75, 0, 0], "outputLevel": 58, "velocitySens": 7 },
+          { "op": 3, "role": "carrier",   "ratio": 1,  "detune": 0,  "egRates": [95, 20, 20, 50], "egLevels": [99, 95, 0, 0], "outputLevel": 99, "velocitySens": 2 },
+          { "op": 4, "role": "modulator", "ratio": 1,  "detune": 0,  "egRates": [95, 29, 20, 50], "egLevels": [99, 95, 0, 0], "outputLevel": 89, "velocitySens": 6 },
+          { "op": 5, "role": "carrier",   "ratio": 1,  "detune": -7, "egRates": [95, 20, 20, 50], "egLevels": [99, 95, 0, 0], "outputLevel": 99, "velocitySens": 0 },
+          { "op": 6, "role": "modulator", "ratio": 1,  "detune": 7,  "egRates": [95, 29, 20, 50], "egLevels": [99, 95, 0, 0], "outputLevel": 79, "velocitySens": 6, "levelScaling": { "breakpoint": "D3", "rightDepth": 19 } }
+        ]}
+      },
+      "postFx": [
+        { "type": "CHORUS", "params": { "rateHz": 0.8, "depth": 0.6, "mix": 0.5 }, "provenance": "inferred", "note": "Typisch: breiter Chorus dahinter" }
+      ],
+      "tutorialSteps": [
+        { "order": 1, "text": "Nur Op 1 und Op 2 einschalten: Ratio 14 auf dem Modulator erzeugt den metallischen 'Tine'-Anschlag.", "focus": ["op1", "op2"] },
+        { "order": 2, "text": "Op 3 und Op 4 dazu: Paar 2 liefert den warmen Grundton.", "focus": ["op3", "op4"] },
+        { "order": 3, "text": "Op 5 und Op 6 dazu: Die Verstimmung ±7 erzeugt Schwebung und Breite.", "focus": ["op5", "op6"] },
+        { "order": 4, "text": "Leise und laut spielen: Die Modulatoren reagieren stark auf Velocity.", "focus": ["op2", "op4", "op6"] },
+        { "order": 5, "text": "Chorus dahinter, das ist der typische 80er-Glanz.", "focus": ["chorus"] }
+      ],
+      "referencePatches": [
+        { "title": "DX7 Piano (SATURATA)", "platform": "VCV Rack", "url": "https://patchstorage.com/dx7-piano/" },
+        { "title": "Implementing DX7 FM algorithms in VCV Rack", "platform": "VCV Rack", "url": "https://community.vcvrack.com/t/implementing-dx7-fm-algorithms-in-vcvrack/16501" },
+        { "title": "FM Electric Piano", "platform": "Nord Modular G2", "url": "https://electro-music.com/forum/viewtopic.php?p=12645" }
+      ],
+      "sources": [
+        { "title": "dx7-patches (npm, JSON der Original-ROM-Patches)", "url": "https://cdn.jsdelivr.net/npm/dx7-patches@1.0.1/readme.md", "usedFor": "Alle Operator- und Global-Parameter" },
+        { "title": "Reverb Machine – Exploring the Yamaha DX7, Part One", "url": "https://www.reverbmachine.com/blog/exploring-the-yamaha-dx7", "usedFor": "Algorithmus 5: Carrier 1/3/5, Modulatoren 2/4/6" },
+        { "title": "Music Production Wiki – DX7 electric piano", "url": "https://musicproductionwiki.com/articles/how-to-recreate-the-dx7-electric-piano", "usedFor": "Preset 11, Statistik" }
+      ]
+    },
+
+    {
+      "id": "thx-deep-note",
+      "title": "THX Deep Note",
+      "artist": "James A. Moorer (THX)",
+      "year": 1983,
+      "status": "reference_only",
+      "difficulty": 5,
+      "category": ["drone", "additive", "glide"],
+      "knownFacts": ["Der VCV-Nachbau nutzt 30 Oszillatoren, die auf exakte Frequenzen gestimmt sind."],
+      "referencePatches": [ { "title": "VCV Rack – THX 'deep note' patch (5 €, für VCV 0.3.2)", "platform": "VCV Rack", "url": "https://sergiofrias25.gumroad.com/l/AMcwv" } ]
+    },
+    {
+      "id": "thriller-frog-bass",
+      "title": "Thriller – 'Frog 13'-Bass",
+      "artist": "Michael Jackson",
+      "year": 1982,
+      "status": "reference_only",
+      "difficulty": 2,
+      "category": ["bass"],
+      "knownFacts": ["Basiert auf dem Preset 'Frog 13' des Casiotone MT-60 (1982)."],
+      "referencePatches": [ { "title": "Frog 13 in Voltage Modular (kostenlos, Dome Music Technologies)", "platform": "Voltage Modular", "url": "https://cherryaudio.com/videos/casio-mt60-frog-13-bass-thriller" } ]
+    },
+    {
+      "id": "on-the-run-sequence",
+      "title": "On the Run – Sequenz",
+      "artist": "Pink Floyd",
+      "year": 1973,
+      "status": "reference_only",
+      "difficulty": 3,
+      "category": ["sequencer", "fx"],
+      "knownFacts": ["Original auf einem EMS VCS3 (Synthi)."],
+      "referencePatches": [ { "title": "On The Run & FM Synthesis (Patch im Thread)", "platform": "VCV Rack", "url": "https://community.vcvrack.com/t/on-the-run-fm-synthesys/1347" } ]
+    },
+    {
+      "id": "tour-de-france",
+      "title": "Tour de France",
+      "artist": "Kraftwerk",
+      "year": 1983,
+      "status": "reference_only",
+      "difficulty": 4,
+      "category": ["sequencer", "fm", "drums"],
+      "knownFacts": ["Der VCV-Nachbau nutzt Plaits, Bogaudio-FM, VCV-Fundamental-VCOs und -Filter, Drum-Synthese und Chronoblob2-Delay."],
+      "referencePatches": [ { "title": "SATURATA MODULAR (Patch + MIDI über Patreon)", "platform": "VCV Rack", "url": "https://www.matrixsynth.com/2026/10/kraftwerk-tour-de-france-recreation-in.html" } ]
+    },
+    {
+      "id": "angel-cover",
+      "title": "Angel",
+      "artist": "Massive Attack",
+      "year": 1998,
+      "status": "reference_only",
+      "difficulty": 4,
+      "category": ["song-cover"],
+      "knownFacts": ["Patch braucht die kommerziellen Module Entrian Sequencers, Entrian Acoustic Drums und VCV Parametra."],
+      "referencePatches": [ { "title": "Angel.vcv", "platform": "VCV Rack", "url": "http://entrian.com/audio/Angel.vcv" } ]
+    }
+  ]
+}

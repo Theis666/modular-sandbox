@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Modular Sandbox</title>
+<meta name="description" content="A pocket modular synthesizer for learning how patching works.">
+<meta name="theme-color" content="#141518">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Modular">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-cables="0">
+<header id="top">
+  <button id="patchBtn" class="tb" aria-label="Patches">☰</button>
+  <div class="title">Modular<span>Sandbox</span></div>
+  <div class="rec-ind"><i></i><span id="recTime">0:00</span></div>
+  <button id="undoBtn" class="tb" aria-label="Undo" disabled>↶</button>
+  <button id="cableBtn" class="tb" aria-label="Cables: solid"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path class="c-cable" d="M5 11.5 C5 22 19 22 19 11.5"/><circle class="c-plug" cx="5" cy="7.5" r="3.6"/><circle class="c-plug" cx="19" cy="7.5" r="3.6"/><circle class="c-hole" cx="5" cy="7.5" r="1.1"/><circle class="c-hole" cx="19" cy="7.5" r="1.1"/><path class="c-off" d="M3 21 L21 3"/></svg></button>
+  <button id="zoomBtn" class="tb small" aria-label="Zoom">100%</button>
+  <button id="guideBtn" class="tb small" aria-label="Guided builds">Guide</button>
+  <button id="infoBtn" class="tb" aria-label="Info mode">?</button>
+  <button id="addBtn" class="tb accent" aria-label="Add module">+</button>
+</header>
+
+<main id="rackWrap">
+  <div id="rackSizer">
+    <div id="rack">
+      <svg id="cables" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+</main>
+
+<section id="guide" hidden aria-live="polite"></section>
+
+<footer id="kbd">
+  <div class="kbd-row">
+    <button id="octDown" class="oct" aria-label="Octave down">−</button>
+    <span class="oct-label">Octave <b id="octLabel">C3</b></span>
+    <button id="octUp" class="oct" aria-label="Octave up">+</button>
+    <button id="keysBtn" class="oct keys" aria-label="How many octaves the keys show">1 oct</button>
+  </div>
+  <div class="keys-row">
+    <div id="modStrip" role="slider" aria-label="Mod strip" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"><i></i><span>MOD</span></div>
+    <div id="keys"></div>
+    <button id="kbdFold" class="kbd-fold" aria-label="Hide the keys (more room for the rack)">▾</button>
+  </div>
+  <button id="kbdShow" class="kbd-show" aria-label="Show the keys">▴ Keys</button>
+</footer>
+
+<div id="toast" role="status"></div>
+<div id="spot" hidden></div>
+<div id="spot2" hidden></div>
+<div id="bubble" hidden></div>
+
+<div id="sheet" hidden>
+  <div id="sheetBackdrop"></div>
+  <div id="sheetPanel"><button class="winbtn sheet-x" data-close aria-label="Close">✕</button><div class="grab"></div><div id="sheetBody"></div></div>
+</div>
+
+<input type="file" id="importInput" accept=".json,application/json" hidden>
+
+<div id="start">
+  <div class="start-card">
+    <div class="logo"><i></i><i></i><i></i></div>
+    <h1>Modular Sandbox</h1>
+    <p>Build sounds by connecting modules with cables, the way real modular synthesizers work.</p>
+    <button id="startBtn" class="btn primary big">Tap to start audio</button>
+    <p class="fine">Tip: add this page to your Home Screen to use it as an app, even offline.</p>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

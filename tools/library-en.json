@@ -1,0 +1,243 @@
+{
+  "_about": "English texts for the Classic sounds library. Numbers come from Idea/patches.json (left unchanged); this file only holds the translated words, keyed by patch id. Param notes are keyed 'moduleId.jsonParam'.",
+  "i-feel-love-bass": {
+    "title": "I Feel Love – sequencer bass",
+    "artist": "Donna Summer / Giorgio Moroder",
+    "goals": [
+      "Program a step sequencer with rest steps",
+      "A filter envelope for a percussive bass",
+      "A tempo-synced delay fills the gaps between the notes (the \"gallop\")"
+    ],
+    "history": [
+      "Moroder built almost the whole song on the Moog modular: bass, snare and hi-hats.",
+      "The Moog kept drifting out of tune, so it was recorded in pieces of 20–30 seconds.",
+      "The bassline only got its typical sound in the mix, through a delay."
+    ],
+    "gear": [
+      "Moog modular (borrowed from Eberhard Schoener, operated by Robby Wedel)"
+    ],
+    "tutorial": [
+      "Sequencer at 8 steps and 125 BPM, with steps 2, 4, 6 and 8 switched off.",
+      "The sequencer's Pitch goes to the oscillator, its Gate to both envelopes.",
+      "A saw through the low-pass filter. The short filter envelope makes every note \"plop\".",
+      "The VCA output goes into the delay. At 1/16 the repeats fill the rests."
+    ],
+    "notes": {
+      "seq.stepActive": "Steps 2, 4, 6 and 8 switched off.",
+      "seq.pitchSet": "In an interview Moroder mentions \"two Cs, a G and a B\" (in German note names \"B\" is B flat). The order of the steps is up to you.",
+      "vcf.mode": "Moog ladder character.",
+      "delay.sync": "1/16 at 125 BPM = 120 ms. It lands exactly between the eighth notes and makes the gallop.",
+      "out.pan": "Computer Music routes the delay to the right main output."
+    },
+    "inApp": [
+      "The delay time is set from the tempo: 1/16 at 125 BPM = 120 ms.",
+      "The order of the four notes is a starting point; the source does not give the original order.",
+      "Stereo panning from the source (output to the right) is left out: the app plays in the middle.",
+      "The two envelopes reach the filter and the VCA directly; the filter's envelope amount is the VCF CV Amt knob."
+    ]
+  },
+  "oxygene-iv-lead": {
+    "title": "Oxygène IV – lead",
+    "artist": "Jean-Michel Jarre",
+    "goals": [
+      "Two slightly detuned oscillators for a beating sound",
+      "An LFO as a subtle vibrato on the pitch",
+      "Very long release times: the sound reacts to how long you hold the notes",
+      "An effect chain: spring reverb before delay"
+    ],
+    "history": [
+      "Recorded at home in Jarre's kitchen, with tracks layered on an 8-track recorder.",
+      "Processed mainly with tape echo and guitar pedals.",
+      "It reached number 4 in the UK singles chart."
+    ],
+    "gear": [
+      "ARP 2600",
+      "EMS VCS3",
+      "Eminent 310",
+      "RMI Harmonic Synthesizer"
+    ],
+    "tutorial": [
+      "Two saw oscillators at 32' (two octaves down), detuned slightly against each other. Listen to the beating.",
+      "A little LFO on both oscillators: a subtle vibrato.",
+      "The filter is almost closed (about 30 Hz) and the envelope opens it. The release lasts over 7 seconds.",
+      "Play short and long notes: the sound changes with how long you hold them.",
+      "Spring reverb and delay: start dry, then mix them in slowly."
+    ],
+    "notes": {
+      "lfo.depth": "Source: turn the FM knob up only slightly.",
+      "vco1.octave": "Range 32' (8' = 0).",
+      "vco1.fineCents": "Voltage Modular frequency knob at -0.03.",
+      "mix.level1": "Source: lower channels 1 and 2 \"a little\".",
+      "vcf.envAmount": "Filter FM 1 almost fully up.",
+      "envFilter.releaseMs": "Source: more than 7000 ms.",
+      "envAmp.decayMs": "Decay fully up.",
+      "reverb.mix": "Source: start dry, then to taste.",
+      "out.pan": "Left main output."
+    },
+    "inApp": [
+      "32' (two octaves down) is Octave −2 on the VCO.",
+      "The Reverb uses its Spring type, a model of a spring reverb.",
+      "Panning to the left output is left out: the app plays in the middle.",
+      "The filter envelope can open the cutoff by up to six octaves here; the source turns it almost fully up."
+    ]
+  },
+  "blade-runner-brass": {
+    "title": "Blade Runner – brass",
+    "artist": "Vangelis",
+    "goals": [
+      "High-pass and low-pass filter in series",
+      "Two envelopes on the same filter cutoff",
+      "A big reverb as part of the sound"
+    ],
+    "history": [
+      "The brass sound itself is simple. It lives from Vangelis' playing and lots of reverb.",
+      "From 1980 Vangelis used a Lexicon 224 as his reverb."
+    ],
+    "gear": [
+      "Yamaha CS-80",
+      "Lexicon 224 (reverb)"
+    ],
+    "tutorial": [
+      "Two saws, one an octave lower, both detuned slightly against each other.",
+      "High-pass first, then low-pass: the high-pass takes away the boom, the low-pass shapes the brass tone.",
+      "Two envelopes on the cutoff: a slow, gentle one and a fast, full one for the \"blow\".",
+      "Chorus and lots of reverb. Play the pitch and the cutoff live."
+    ],
+    "notes": {
+      "kbd.voices": "The CS-80 has 8 voices.",
+      "vco1.fineCents": "Fathom CM pitch fine -0.03, detune on.",
+      "hpf.cutoffHz": "Fathom CM cutoff about 600; the unit is unclear.",
+      "hpf.resonance": "Fathom CM resonance just under 1.90.",
+      "lpf.cutoffHz": "Fathom CM cutoff 24.",
+      "env1.releaseMs": "Release almost fully up.",
+      "vca.gain": "Source: lower the master volume.",
+      "chorus.depth": "Source: raise depth and feedback.",
+      "reverb.decayS": "Source: raise the decay.",
+      "reverb.mix": "Source: raise the wet level."
+    },
+    "inApp": [
+      "Plays up to 8 notes at once, like the CS-80: the Keyboard's Voices knob is at 8, and every module behind it is copied once per voice.",
+      "Both envelopes reach the cutoff through a Mixer, because every input takes only one cable. The Mixer levels are the envelope amounts from the source.",
+      "Playing pitch and cutoff live with a ribbon, mod wheel or aftertouch is not available."
+    ]
+  },
+  "stranger-things-arp": {
+    "title": "Stranger Things – intro arpeggio",
+    "artist": "Kyle Dixon & Michael Stein",
+    "goals": [
+      "An arpeggiator over a held chord",
+      "A random LFO on the pitch for \"analog\" drift",
+      "A filter envelope without sustain for plucked notes"
+    ],
+    "history": [
+      "The arpeggiated bassline of the intro was made on a Roland SH-2."
+    ],
+    "gear": [
+      "Roland SH-2"
+    ],
+    "tutorial": [
+      "A held C major 7 chord, the arpeggiator on Down-Up with Hold. Start 2 lets the line begin on G.",
+      "Two square oscillators, one an octave lower, plus a sub oscillator.",
+      "Two slow random LFOs on the pitch: the notes drift like on an old analog synth.",
+      "Filter and amp envelope without sustain: every note dies away.",
+      "Open the cutoff slowly by hand, as in the intro."
+    ],
+    "notes": {
+      "kbd.unisonDetuneCents": "Source: to taste.",
+      "kbd.heldChord": "C major 7.",
+      "arp.offset": "Starts on G.",
+      "lfo1.waveform": "Ableton Noise2 = continuous random.",
+      "vco1.fineCents": "Ableton Analog detune 0.02.",
+      "vcf.cutoffHz": "Source: the cutoff is moved by hand during the piece, so try it live.",
+      "vcf.keyTrack": "Source: a positive value.",
+      "vcf.drive": "Ableton drive Sym2.",
+      "envFilter.decayMs": "Source: between 500 and 1500 ms.",
+      "chorus.mix": "Source: chorus is a big part of the 80s sound."
+    },
+    "inApp": [
+      "The Arp starts with the stored C major 7 chord. Hold your own chord on the keys to replace it.",
+      "The sub oscillator is a third VCO, one octave below the lower oscillator.",
+      "Unison (two voices per note) and filter drive are left out."
+    ]
+  },
+  "dx7-epiano-1": {
+    "title": "DX7 E.PIANO 1",
+    "artist": "Yamaha factory preset (Twin Peaks theme and many 80s ballads)",
+    "goals": [
+      "FM synthesis: carriers and modulators",
+      "Algorithm 5: three pairs of modulator → carrier",
+      "A high frequency ratio (14) makes the bell-like attack",
+      "Velocity sensitivity of the modulators makes the sound respond to touch"
+    ],
+    "history": [
+      "Factory preset 11 of the DX7, seen as the best-known synth preset of the 80s.",
+      "According to a study (Lavengood, 2019) it was on 61% of the 1986 R&B number-one hits.",
+      "On several Whitney Houston songs it is disputed whether you hear a DX7, a modified Rhodes or both."
+    ],
+    "gear": [
+      "Yamaha DX7"
+    ],
+    "tutorial": [
+      "Only operators 1 and 2: ratio 14 on the modulator makes the metallic \"tine\" attack.",
+      "Add operators 3 and 4: the second pair gives the warm body.",
+      "Add operators 5 and 6: the ±7 detune makes beating and width.",
+      "Play soft and loud: the modulators react strongly to velocity.",
+      "Chorus behind it: the typical 80s shine."
+    ],
+    "notes": {},
+    "inApp": [
+      "The real preset uses 6 operators. The DX7 E-Piano guide builds 4 of them: two modulator → carrier pairs (ratio 14 for the tine, ratio 1 for the body), played with 4 voices, with chorus and reverb.",
+      "A full 6-operator FM module is a possible later step."
+    ]
+  },
+  "thx-deep-note": {
+    "title": "THX Deep Note",
+    "artist": "James A. Moorer (THX)",
+    "facts": [
+      "The VCV Rack recreation uses 30 oscillators tuned to exact frequencies."
+    ],
+    "references": [
+      "VCV Rack – THX \"Deep Note\" patch (5 €, for VCV Rack 0.3.2)"
+    ]
+  },
+  "thriller-frog-bass": {
+    "title": "Thriller – \"Frog 13\" bass",
+    "artist": "Michael Jackson",
+    "facts": [
+      "Based on the preset \"Frog 13\" of the Casio MT-60 home keyboard (1982)."
+    ],
+    "references": [
+      "Frog 13 in Voltage Modular (free, Dome Music Technologies)"
+    ]
+  },
+  "on-the-run-sequence": {
+    "title": "On the Run – sequence",
+    "artist": "Pink Floyd",
+    "facts": [
+      "Originally made on an EMS VCS3 (Synthi)."
+    ],
+    "references": [
+      "On the Run & FM synthesis (patch in the thread)"
+    ]
+  },
+  "tour-de-france": {
+    "title": "Tour de France",
+    "artist": "Kraftwerk",
+    "facts": [
+      "The VCV Rack recreation uses Plaits, Bogaudio FM, VCV Fundamental oscillators and filters, drum synthesis and a Chronoblob2 delay."
+    ],
+    "references": [
+      "SATURATA MODULAR (patch and MIDI files via Patreon)"
+    ]
+  },
+  "angel-cover": {
+    "title": "Angel",
+    "artist": "Massive Attack",
+    "facts": [
+      "The patch needs the commercial modules Entrian Sequencers, Entrian Acoustic Drums and VCV Parametra."
+    ],
+    "references": [
+      "Angel.vcv"
+    ]
+  }
+}

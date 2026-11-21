@@ -1,0 +1,52 @@
+{
+ "example:Basic Synth": {
+  "peak": 0.7522,
+  "rms": 0.1507,
+  "centroid": 712
+ },
+ "example:Vibrato": {
+  "peak": 0.7517,
+  "rms": 0.1507,
+  "centroid": 810
+ },
+ "example:Wah": {
+  "peak": 1.5512,
+  "rms": 0.3463,
+  "centroid": 799
+ },
+ "example:Wind": {
+  "peak": 0.2938,
+  "rms": 0.0616,
+  "centroid": 3351
+ },
+ "example:Sequenced Bass": {
+  "peak": 1.1435,
+  "rms": 0.1702,
+  "centroid": 994
+ },
+ "library:i-feel-love-bass": {
+  "peak": 1.0713,
+  "rms": 0.1531,
+  "centroid": 1274
+ },
+ "library:stranger-things-arp": {
+  "peak": 0.9781,
+  "rms": 0.3307,
+  "centroid": 2287
+ },
+ "library:oxygene-iv-lead": {
+  "peak": 0.813,
+  "rms": 0.253,
+  "centroid": 386
+ },
+ "library:blade-runner-brass": {
+  "peak": 0.7461,
+  "rms": 0.1637,
+  "centroid": 980
+ },
+ "example:Drum Kit": {
+  "peak": 0.7725,
+  "rms": 0.1565,
+  "centroid": 9967
+ }
+}
