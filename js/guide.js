@@ -265,13 +265,24 @@ export function initGuide(api) {
     $('#guideExit').onclick = close;
     requestAnimationFrame(api.layout);
   }
+  // Hearing a knob change needs the module to be in the sound: a chain of cables from it to the Output.
+  // Before that (a VCO set up before its cable, a Scope), a before/after comparison has nothing to play.
+  function reachesOutput(id) {
+    const seen = new Set([id]), queue = [id];
+    while (queue.length) {
+      const m = api.modById(queue.shift()); if (!m) continue;
+      if (m.type === 'output') return true;
+      for (const c of S.cables) if (c.from.module === m.id && !seen.has(c.to.module)) { seen.add(c.to.module); queue.push(c.to.module); }
+    }
+    return false;
+  }
   function complete() {
     if (!G || G.completed) return;
     const s = step();
     if (s.do === 'set' && G.before !== undefined) {
       const m = api.modById(G.alias[s.mod]);
       const ctl = m && MODULES[m.type].controls.find(x => x.id === s.param);
-      if (ctl && ctl.type !== 'toggle') { // an on/off switch needs no comparison
+      if (ctl && ctl.type !== 'toggle' && reachesOutput(m.id)) { // an on/off switch needs no comparison
         G.completed = true; G.compare = { before: G.before, after: m.params[s.param], showing: 'after' };
         render(); return;
       }

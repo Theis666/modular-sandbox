@@ -3,7 +3,8 @@
 // unknown modules, jacks or controls; goals no knob position can reach; goals already met before
 // the step (the step would tick itself off); cables that silently replace an earlier cable;
 // "play" steps with nothing to play; controls on the More page the text does not mention;
-// chapter titles that match no step; old UI words (⋯, Exit, Hide).
+// chapter titles that match no step; old UI words (⋯, Exit, Hide). It also counts knob steps that
+// come before the module is cabled to the Output (the guide skips 'Hear the difference' there).
 import { MODULES, defaultParams, patchParams } from '../js/modules.js';
 import { EXAMPLES } from '../js/patches.js';
 import { GUIDES, CONCEPTS } from '../js/guides.js';
@@ -16,7 +17,7 @@ const fromNorm = (c, n) => {
 const candidates = c => c.type === 'select' ? c.options : c.type === 'toggle' ? [0, 1] : Array.from({ length: 201 }, (_, k) => fromNorm(c, k / 200));
 const OLD_UI = [/⋯/, /\bExit\b/, /\bHide\b/, /tap (its|the module'?s?) name to (move|remove)/i];
 
-let problems = 0, notes = 0;
+let problems = 0, notes = 0, silentSets = 0;
 for (const [gi, g] of GUIDES.entries()) {
   const out = [];
   const warn = (i, msg) => { out.push(`  step ${i + 1}: ${msg}`); problems++; };
@@ -62,6 +63,10 @@ for (const [gi, g] of GUIDES.entries()) {
       // the learner (or "Do it for me") ends close to the current value, a few steps inside the goal
       const v = typeof cur === 'number' ? [...ok].sort((x, y) => Math.abs(x - cur) - Math.abs(y - cur))[Math.min(3, ok.length - 1)] : ok[0];
       m.params[s.param] = v;
+      // the guide only offers 'Hear the difference' when cables lead from the module to the Output
+      const seen = new Set([s.mod]), q = [s.mod]; let heard = false;
+      while (q.length) { const x = q.shift(); if (rack[x].type === 'output') { heard = true; break; } for (const cb of cables) if (cb.from[0] === x && !seen.has(cb.to[0])) { seen.add(cb.to[0]); q.push(cb.to[0]); } }
+      if (!heard && c.type !== 'toggle') silentSets++;
       const label = (c.full || c.label || '').toLowerCase(), short = (c.label || '').toLowerCase();
       const txt = words.toLowerCase();
       // the More page stays open once a step has sent the learner there
@@ -75,5 +80,6 @@ for (const [gi, g] of GUIDES.entries()) {
   console.log(`${gi} ${g.id} (${g.steps.length} steps)${out.length ? '' : ' ok'}`);
   out.forEach(l => console.log(l));
 }
-console.log(`\n${problems} problem(s), ${notes} note(s)`);
+console.log(`\n${silentSets} knob step(s) come before the module is cabled to the Output: no before/after comparison there`);
+console.log(`${problems} problem(s), ${notes} note(s)`);
 process.exitCode = problems ? 1 : 0;
