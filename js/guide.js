@@ -283,7 +283,12 @@ export function initGuide(api) {
 
   function doItForMe() {
     const s = step();
-    if (s.do === 'add') { api.closeSheet(); api.addModule(s.type); return; }
+    if (s.do === 'add') {
+      api.closeSheet();
+      // a module of this type that no step uses yet counts: add one only when there is none
+      if (reached(s)) return complete();
+      api.addModule(s.type); return;
+    }
     if (s.do === 'cable') {
       const a = ref(s.from[0], s.from[1], 'out'), b = ref(s.to[0], s.to[1], 'in');
       if (!a || !b) return api.toast('A module this step needs was removed. Exit the guide and start it again.', 3500);
@@ -444,7 +449,9 @@ export function initGuide(api) {
 
   // Fold when a touch in the rack ends (not when it starts), so nothing moves under the finger mid-gesture.
   $('#rack').addEventListener('pointerup', () => {
-    if (G && !G.finished && !G.folded && !S.infoMode) { G.folded = true; render(); }
+    // not on a chapter break or a before/after comparison: those panels have no step to fold, and
+    // drawing the step there left the guide stuck on its break (no goal checks, ever more modules)
+    if (G && !G.finished && !G.inBreak && !G.compare && !G.folded && !S.infoMode) { G.folded = true; render(); }
     // a tour keeps its panel open: it has no task in the rack
   }, true);
 

@@ -235,7 +235,8 @@ function onHeadDown(e, m) {
   const end = ev => {
     head.removeEventListener('pointermove', move); head.removeEventListener('pointerup', end); head.removeEventListener('pointercancel', end);
     // a tap without movement opens the menu (on pointerup: the touch may have no click, see the touchstart guard)
-    if (!drag) { if (ev.type === 'pointerup') moduleMenu(m); return; }
+    // while a jack is picked, the tap only drops it (rackWrap pointerup below), no menu
+    if (!drag) { if (ev.type === 'pointerup' && !(S.pending && S.pending.mode === 'tap')) moduleMenu(m); return; }
     m.el.classList.remove('dragging'); m.el.style.transform = '';
     document.body.classList.remove('moving'); bin.hidden = true; bin.classList.remove('hot'); dropMark.hidden = true;
     if (ev.type !== 'pointerup') { drawCables(); return; }
@@ -586,10 +587,26 @@ rack.addEventListener('pointerdown', e => {
   if (t.closest('.mhead') && !t.closest('.ibtn')) { const m = modById(t.closest('.module').dataset.mod); if (m) return onHeadDown(e, m); }
   if (!t.closest('button')) { const near = jackNear(e.clientX, e.clientY); if (near) return onJackDown(e, near); }
 });
+// A short tap anywhere on the rack (not on or beside a jack) drops a jack picked by tapping.
+// Pointer events, not click: iOS sends no click where the touch start was cancelled (knobs, names).
+// A scroll or a knob turn does not drop it, so you can scroll to the target jack.
+let dropTap = null;
+rackWrap.addEventListener('pointerdown', e => {
+  dropTap = S.pending && S.pending.mode === 'tap' ? { x: e.clientX, y: e.clientY, t: performance.now() } : null;
+}, true);
+rackWrap.addEventListener('pointerup', e => {
+  const d = dropTap; dropTap = null;
+  if (!d || d.done || !S.pending || S.pending.mode !== 'tap' || S.infoMode) return;
+  if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 10 || performance.now() - d.t > 600) return;
+  if (e.target.closest && e.target.closest('.jack-wrap') || jackNear(e.clientX, e.clientY)) return;
+  clearPending(); toast(''); dropTap = { done: performance.now() };
+});
+rackWrap.addEventListener('pointercancel', () => { dropTap = null; });
 rack.addEventListener('click', e => {
   const t = e.target;
   if (S.infoMode) return;
-  if (S.pending && S.pending.mode === 'tap' && !t.closest('.jack-wrap') && !jackNear(e.clientX, e.clientY)) { clearPending(); return; }
+  // the click that follows a tap which dropped a picked jack does nothing else (no switch flips)
+  if (dropTap && dropTap.done) { const late = performance.now() - dropTap.done > 400; dropTap = null; if (!late) return; }
   const m = t.closest('.module') && modById(t.closest('.module').dataset.mod);
   if (!m) return;
   const box = t.closest('.ctl'); const c = box && MODULES[m.type].controls.find(x => x.id === box.dataset.ctl);
@@ -1482,6 +1499,7 @@ const typingInField = e => e.target instanceof Element && !!e.target.closest('in
 window.addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !e.shiftKey && !typingInField(e)) { e.preventDefault(); undo(); return; }
   if (e.repeat || e.metaKey || e.ctrlKey || typingInField(e)) return;
+  if (e.key === 'Escape' && S.pending) { clearPending(); toast(''); return; }
   const i = KEYMAP.indexOf(e.key); if (i < 0) return;
   const el = keysEl.querySelector(`[data-n="${i}"]`); if (el) pressKey('k' + e.key, el);
 });

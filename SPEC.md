@@ -27,6 +27,7 @@ MIDI, Vital export. (Polyphony, effects and the Scope module were added later.) 
 ## Patching
 - Drag from a jack to another jack, **or** tap a jack then tap a target jack.
 - While a cable is pending, all compatible jacks glow; incompatible ones dim.
+- A jack picked by tapping is dropped again by a short tap anywhere else on the rack (also on a knob or a module name), by tapping the same jack, or with the Escape key. Scrolling or turning a knob keeps it, so you can scroll to the target jack.
 - A cable always runs output → input; starting from an input works too and is reversed.
 - An input accepts one cable; an output can feed many. Plugging into an occupied input replaces the old cable.
 - Tap a cable → popover with live **Scope** and "Remove".
