@@ -1,5 +1,5 @@
 // Offline support: network first (so updates arrive automatically), cache as fallback.
-const VERSION = 'mss-v29';
+const VERSION = 'mss-v30';
 const FILES = ['./', 'index.html', 'styles.css', 'manifest.webmanifest',
   'js/app.js', 'js/engine.js', 'js/modules.js', 'js/patches.js', 'js/recorder.js', 'js/guides.js', 'js/guide.js', 'js/abbr.js', 'js/intro.js', 'js/library.js', 'js/voices.js', 'js/ear.js', 'js/offline.js', 'js/worklet.js',
   'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];

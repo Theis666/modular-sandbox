@@ -34,6 +34,11 @@
   "rms": 0.3307,
   "centroid": 2287
  },
+ "library:on-the-run-sequence": {
+  "peak": 0.9865,
+  "rms": 0.3268,
+  "centroid": 2025
+ },
  "library:oxygene-iv-lead": {
   "peak": 0.813,
   "rms": 0.253,

@@ -146,3 +146,10 @@ Open: check on the iPhone again; if it still runs warm, the audio itself (AudioW
 
 ## Guide audit (2026-11-21)
 New `tools/check-guides.mjs` replays every guide on a model of the rack. Fixed: eight steps whose goal was already met before the step (it ticked itself off and the before/after comparison showed the same value twice): Random melodies (Slew Rise, LFO Rate), Kick (Decay, Cutoff), Snare (Decay, Cutoff, FM Amt), DX7 E-Piano (tine Decay); the Snare guide's third chapter pause never appeared (its start title matched no step); two cable steps that replaced a Keyboard cable without saying so. Content: the S&H range is one octave down to one up (the text said two), with the Atten at 0.3 the notes stay within about a major third; Moroder's "B" (German note name) is B flat, as the guide already plays. All 19 guides then ran through the walker in landscape without errors.
+
+## Own recreations of story-only Classic sounds (2026-11-22)
+Five library entries had only a story card, because `Idea/patches.json` gives no settings for them. They get our own patches, one at a time, after research:
+- **On the Run** (Pink Floyd, 1973): **Done**. Clock at 165 BPM in 1/16 drives the Sequencer (tempo from Guesdon & Margotin via Wikipedia), notes E–G–A–G–D–C–D–E by ear (sources disagree), square wave into a resonant LP24 swept by a slow LFO, hi-hat from Noise × short envelope in the Ring modulator (as on the record), spring reverb. Patch, tour and a 55-step guide.
+- **Thriller** (Michael Jackson, 1982): open. The entry is about the "Frog 13" sound of a Casio keyboard, which is a short stab in the breakdown, not the famous bassline (ARP 2600 according to MusicRadar). No source found gives the notes of either part.
+- **Angel**, **Tour de France**: possible in part; not started.
+- **THX Deep Note**: not possible (about 30 voices, the app has 8).

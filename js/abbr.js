@@ -35,6 +35,7 @@ export const ABBR = {
   'MT-60': 'Casio MT-60: a small home keyboard from 1982',
   EMS: 'Electronic Music Studios: a British synthesizer maker',
   VCS3: 'EMS VCS3: a small British modular synthesizer from 1969, also called the Synthi',
+  AKS: 'Synthi AKS: the EMS VCS3 built into a briefcase, with a touch keyboard and a sequencer (from 1972)',
   RMI: 'Rocky Mount Instruments: an American maker of electronic organs and keyboards',
   THX: 'a cinema sound company; the Deep Note is its logo sound',
   VCV: 'VCV Rack: free software that works like a modular synthesizer on a computer',
@@ -48,7 +49,7 @@ export const ABBR = {
 };
 
 // Words in capitals that are not abbreviations.
-export const NOT_ABBR = new Set(['ON', 'OFF', 'PIANO', 'IV', 'II', 'C3', 'C4', 'G3']); // IV, II: Roman numerals ("Oxygène IV", Chorus mode II); C3 etc.: note names, explained where they appear
+export const NOT_ABBR = new Set(['ON', 'OFF', 'PIANO', 'IV', 'II', 'C3', 'C4', 'G3', 'A3', 'D4', 'E3', 'E4']); // IV, II: Roman numerals ("Oxygène IV", Chorus mode II); C3 etc.: note names, explained where they appear
 
 const escAbbr = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const ABBR_KEYS = Object.keys(ABBR).sort((a, b) => b.length - a.length).map(k => k.replace(/[&]/g, '\\&'));

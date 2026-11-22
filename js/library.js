@@ -975,6 +975,574 @@ export const LIBRARY = [
   }
  },
  {
+  "id": "on-the-run-sequence",
+  "title": "On the Run – sequence",
+  "artist": "Pink Floyd",
+  "year": 1973,
+  "status": "recreation",
+  "difficulty": 3,
+  "category": [
+   "sequencer",
+   "fx"
+  ],
+  "goals": [
+   "Drive a sequencer from a Clock to play sixteenth notes",
+   "A resonant filter that sweeps slowly by itself (LFO on the cutoff)",
+   "A hi-hat made of white noise and a ring modulator"
+  ],
+  "history": [
+   "On the Run is the third track of The Dark Side of the Moon (1973).",
+   "The eight-note sequence was typed into the sequencer of an EMS Synthi AKS and sped up. Alan Parsons remembered the notes being entered slowly and played back fast.",
+   "The sequence runs at 165 BPM while the filter frequency and resonance change.",
+   "The hi-hat came from the same synthesizer: white noise into the ring modulator, opened by the sequencer's trigger pulse."
+  ],
+  "gear": [
+   "EMS Synthi AKS (the portable VCS3 in a case, with a built-in keyboard and sequencer)",
+   "EMS VCS3 (credited on the album, used for the passing-vehicle sounds)"
+  ],
+  "facts": [],
+  "inApp": [
+   "This patch is our own recreation: the source data has no settings for this sound. Only the tempo and the way the hi-hat is made come from a source; every other knob is marked ≈.",
+   "The notes E–G–A–G–D–C–D–E come from transcriptions by ear. Sources disagree about the exact notes, so treat them as a close guess.",
+   "The steps are sixteenth notes: a Clock at 165 BPM in 1/16 drives the Sequencer.",
+   "Only the filter frequency moves here: this app has no input to sweep the resonance.",
+   "Left out: the passing-vehicle sounds, footsteps, voices and the other tape effects of the track."
+  ],
+  "tutorial": [
+   {
+    "text": "A Clock at 165 BPM in sixteenths drives the Sequencer: one step per pulse.",
+    "focus": [
+     "clk",
+     "seq"
+    ]
+   },
+   {
+    "text": "Eight notes, E–G–A–G–D–C–D–E, on a square wave one octave down.",
+    "focus": [
+     "seq",
+     "vco"
+    ]
+   },
+   {
+    "text": "A steep low-pass filter with high resonance. A very slow LFO sweeps its cutoff, so the line keeps changing colour.",
+    "focus": [
+     "vcf",
+     "lfo"
+    ]
+   },
+   {
+    "text": "The hi-hat: white noise times a very short envelope, in the Ring modulator. Every step ticks.",
+    "focus": [
+     "noise",
+     "envHat",
+     "ring"
+    ]
+   },
+   {
+    "text": "Synth and hi-hat meet in the Mixer and get a little spring reverb, like the one built into the Synthi.",
+    "focus": [
+     "mix",
+     "rev"
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "title": "On the Run (instrumental) – Wikipedia (tempo and hi-hat cite Guesdon & Margotin, Pink Floyd All the Songs, 2017)",
+    "url": "https://en.wikipedia.org/wiki/On_the_Run_(instrumental)"
+   },
+   {
+    "title": "Shimamura: EMS VCS3 & Synthi AKS (Japanese; notes by ear)",
+    "url": "https://www.shimamura.co.jp/update/?p=7741"
+   }
+  ],
+  "references": [
+   {
+    "title": "On the Run & FM synthesis (patch in the thread)",
+    "platform": "VCV Rack",
+    "url": "https://community.vcvrack.com/t/on-the-run-fm-synthesys/1347"
+   }
+  ],
+  "guide": "ontherun",
+  "patch": {
+   "format": "modular-synth-sandbox",
+   "version": 1,
+   "name": "On the Run – sequence",
+   "modules": [
+    {
+     "id": "clk",
+     "type": "clock",
+     "params": {
+      "tempo": 165,
+      "div": "1/16",
+      "swing": 0,
+      "run": 1
+     }
+    },
+    {
+     "id": "seq",
+     "type": "sequencer",
+     "params": {
+      "s1": 4,
+      "s2": 7,
+      "s3": 9,
+      "s4": 7,
+      "s5": 14,
+      "s6": 12,
+      "s7": 14,
+      "s8": 16,
+      "g1": 1,
+      "g2": 1,
+      "g3": 1,
+      "g4": 1,
+      "g5": 1,
+      "g6": 1,
+      "g7": 1,
+      "g8": 1,
+      "tempo": 165,
+      "len": 0.6,
+      "run": 1
+     }
+    },
+    {
+     "id": "vco",
+     "type": "vco",
+     "params": {
+      "wave": "square",
+      "tune": -1,
+      "fine": 0
+     }
+    },
+    {
+     "id": "vcf",
+     "type": "vcf",
+     "params": {
+      "type": "lowpass24",
+      "cutoff": 650,
+      "res": 0.7,
+      "cv": 0.9
+     }
+    },
+    {
+     "id": "lfo",
+     "type": "lfo",
+     "params": {
+      "wave": "triangle",
+      "rate": 0.12,
+      "depth": 0.7
+     }
+    },
+    {
+     "id": "envAmp",
+     "type": "adsr",
+     "params": {
+      "a": 0.002,
+      "d": 0.2,
+      "s": 0.7,
+      "r": 0.05
+     }
+    },
+    {
+     "id": "vca",
+     "type": "vca",
+     "params": {
+      "level": 0,
+      "cv": 1
+     }
+    },
+    {
+     "id": "noise",
+     "type": "noise",
+     "params": {
+      "level": 0.6,
+      "color": "white"
+     }
+    },
+    {
+     "id": "envHat",
+     "type": "adsr",
+     "params": {
+      "a": 0.001,
+      "d": 0.03,
+      "s": 0,
+      "r": 0.02
+     }
+    },
+    {
+     "id": "ring",
+     "type": "ring",
+     "params": {}
+    },
+    {
+     "id": "mix",
+     "type": "mixer",
+     "params": {
+      "l1": 0.8,
+      "l2": 0.3,
+      "l3": 0,
+      "out": 1
+     }
+    },
+    {
+     "id": "rev",
+     "type": "reverb",
+     "params": {
+      "type": "spring",
+      "size": 1.2,
+      "tone": 3500,
+      "mix": 0.18
+     }
+    },
+    {
+     "id": "out",
+     "type": "output",
+     "params": {
+      "vol": 0.5
+     }
+    }
+   ],
+   "cables": [
+    {
+     "from": {
+      "module": "clk",
+      "jack": "clock"
+     },
+     "to": {
+      "module": "seq",
+      "jack": "clock"
+     }
+    },
+    {
+     "from": {
+      "module": "seq",
+      "jack": "pitch"
+     },
+     "to": {
+      "module": "vco",
+      "jack": "pitch"
+     }
+    },
+    {
+     "from": {
+      "module": "vco",
+      "jack": "out"
+     },
+     "to": {
+      "module": "vcf",
+      "jack": "in"
+     }
+    },
+    {
+     "from": {
+      "module": "lfo",
+      "jack": "out"
+     },
+     "to": {
+      "module": "vcf",
+      "jack": "cutoff"
+     }
+    },
+    {
+     "from": {
+      "module": "seq",
+      "jack": "gate"
+     },
+     "to": {
+      "module": "envAmp",
+      "jack": "gate"
+     }
+    },
+    {
+     "from": {
+      "module": "vcf",
+      "jack": "out"
+     },
+     "to": {
+      "module": "vca",
+      "jack": "in"
+     }
+    },
+    {
+     "from": {
+      "module": "envAmp",
+      "jack": "out"
+     },
+     "to": {
+      "module": "vca",
+      "jack": "cv"
+     }
+    },
+    {
+     "from": {
+      "module": "noise",
+      "jack": "out"
+     },
+     "to": {
+      "module": "ring",
+      "jack": "a"
+     }
+    },
+    {
+     "from": {
+      "module": "seq",
+      "jack": "gate"
+     },
+     "to": {
+      "module": "envHat",
+      "jack": "gate"
+     }
+    },
+    {
+     "from": {
+      "module": "envHat",
+      "jack": "out"
+     },
+     "to": {
+      "module": "ring",
+      "jack": "b"
+     }
+    },
+    {
+     "from": {
+      "module": "vca",
+      "jack": "out"
+     },
+     "to": {
+      "module": "mix",
+      "jack": "in1"
+     }
+    },
+    {
+     "from": {
+      "module": "ring",
+      "jack": "out"
+     },
+     "to": {
+      "module": "mix",
+      "jack": "in2"
+     }
+    },
+    {
+     "from": {
+      "module": "mix",
+      "jack": "out"
+     },
+     "to": {
+      "module": "rev",
+      "jack": "in"
+     }
+    },
+    {
+     "from": {
+      "module": "rev",
+      "jack": "out"
+     },
+     "to": {
+      "module": "out",
+      "jack": "in"
+     }
+    }
+   ],
+   "meta": {
+    "library": "on-the-run-sequence",
+    "params": {
+     "clk": {
+      "tempo": {
+       "prov": "source",
+       "note": "165 BPM (Guesdon & Margotin 2017, p. 351, via Wikipedia)."
+      },
+      "div": {
+       "prov": "inferred",
+       "note": "Sixteenth notes: inferred from listening, no source gives the note length."
+      },
+      "swing": {
+       "prov": "inferred"
+      },
+      "run": {
+       "prov": "inferred"
+      }
+     },
+     "seq": {
+      "s1": {
+       "prov": "inferred",
+       "note": "Notes E–G–A–G–D–C–D–E, from a low E up to the E one octave higher, transcribed by ear; sources disagree."
+      },
+      "s2": {
+       "prov": "inferred"
+      },
+      "s3": {
+       "prov": "inferred"
+      },
+      "s4": {
+       "prov": "inferred"
+      },
+      "s5": {
+       "prov": "inferred"
+      },
+      "s6": {
+       "prov": "inferred"
+      },
+      "s7": {
+       "prov": "inferred"
+      },
+      "s8": {
+       "prov": "inferred"
+      },
+      "g1": {
+       "prov": "inferred"
+      },
+      "g2": {
+       "prov": "inferred"
+      },
+      "g3": {
+       "prov": "inferred"
+      },
+      "g4": {
+       "prov": "inferred"
+      },
+      "g5": {
+       "prov": "inferred"
+      },
+      "g6": {
+       "prov": "inferred"
+      },
+      "g7": {
+       "prov": "inferred"
+      },
+      "g8": {
+       "prov": "inferred"
+      },
+      "tempo": {
+       "prov": "inferred"
+      },
+      "len": {
+       "prov": "inferred"
+      },
+      "run": {
+       "prov": "inferred"
+      }
+     },
+     "vco": {
+      "wave": {
+       "prov": "inferred",
+       "note": "Square: two recreations (by ear) use a square or 50 % pulse wave."
+      },
+      "tune": {
+       "prov": "inferred"
+      },
+      "fine": {
+       "prov": "inferred"
+      }
+     },
+     "vcf": {
+      "type": {
+       "prov": "inferred"
+      },
+      "cutoff": {
+       "prov": "inferred"
+      },
+      "res": {
+       "prov": "inferred",
+       "note": "High resonance: the sources say the resonance was turned during the track; this app cannot sweep it."
+      },
+      "cv": {
+       "prov": "inferred"
+      }
+     },
+     "lfo": {
+      "wave": {
+       "prov": "inferred"
+      },
+      "rate": {
+       "prov": "inferred",
+       "note": "A very slow sweep stands in for the hand-turned filter knob."
+      },
+      "depth": {
+       "prov": "inferred"
+      }
+     },
+     "envAmp": {
+      "a": {
+       "prov": "inferred"
+      },
+      "d": {
+       "prov": "inferred"
+      },
+      "s": {
+       "prov": "inferred"
+      },
+      "r": {
+       "prov": "inferred"
+      }
+     },
+     "vca": {
+      "level": {
+       "prov": "inferred"
+      },
+      "cv": {
+       "prov": "inferred"
+      }
+     },
+     "noise": {
+      "level": {
+       "prov": "inferred"
+      },
+      "color": {
+       "prov": "inferred"
+      }
+     },
+     "envHat": {
+      "a": {
+       "prov": "inferred"
+      },
+      "d": {
+       "prov": "inferred"
+      },
+      "s": {
+       "prov": "inferred"
+      },
+      "r": {
+       "prov": "inferred"
+      }
+     },
+     "mix": {
+      "l1": {
+       "prov": "inferred"
+      },
+      "l2": {
+       "prov": "inferred"
+      },
+      "l3": {
+       "prov": "inferred"
+      },
+      "out": {
+       "prov": "inferred"
+      }
+     },
+     "rev": {
+      "type": {
+       "prov": "inferred"
+      },
+      "size": {
+       "prov": "inferred"
+      },
+      "tone": {
+       "prov": "inferred"
+      },
+      "mix": {
+       "prov": "inferred"
+      }
+     },
+     "out": {
+      "vol": {
+       "prov": "inferred"
+      }
+     }
+    }
+   }
+  }
+ },
+ {
   "id": "oxygene-iv-lead",
   "title": "Oxygène IV – lead",
   "artist": "Jean-Michel Jarre",
@@ -2185,36 +2753,6 @@ export const LIBRARY = [
     "title": "Frog 13 in Voltage Modular (free, Dome Music Technologies)",
     "platform": "Voltage Modular",
     "url": "https://cherryaudio.com/videos/casio-mt60-frog-13-bass-thriller"
-   }
-  ],
-  "guide": null,
-  "patch": null
- },
- {
-  "id": "on-the-run-sequence",
-  "title": "On the Run – sequence",
-  "artist": "Pink Floyd",
-  "year": 1973,
-  "status": "reference_only",
-  "difficulty": 3,
-  "category": [
-   "sequencer",
-   "fx"
-  ],
-  "goals": [],
-  "history": [],
-  "gear": [],
-  "facts": [
-   "Originally made on an EMS VCS3 (Synthi)."
-  ],
-  "inApp": [],
-  "tutorial": [],
-  "sources": [],
-  "references": [
-   {
-    "title": "On the Run & FM synthesis (patch in the thread)",
-    "platform": "VCV Rack",
-    "url": "https://community.vcvrack.com/t/on-the-run-fm-synthesys/1347"
    }
   ],
   "guide": null,
