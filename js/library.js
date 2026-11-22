@@ -441,10 +441,13 @@ export const LIBRARY = [
    "A filter envelope without sustain for plucked notes"
   ],
   "history": [
-   "The arpeggiated bassline of the intro was made on a Roland SH-2."
+   "Accounts differ on the arpeggio. Roland, quoting Michael Stein, says he played it by hand on an old Oberheim and that the rolling bassline came from a Roland SH-2; tutorials such as Mixdown's credit the arpeggiated line to the SH-2.",
+   "The lead is a Roland Jupiter-8; about 25 synthesizers were used for the theme."
   ],
   "gear": [
-   "Roland SH-2"
+   "Roland SH-2 (bass)",
+   "Oberheim (arpeggio, according to Roland)",
+   "Roland Jupiter-8 (lead)"
   ],
   "facts": [],
   "inApp": [
@@ -493,6 +496,10 @@ export const LIBRARY = [
    {
     "title": "Mixdown – How to recreate the Stranger Things intro theme",
     "url": "https://mixdownmag.com.au/features/how-to-recreate-and-play-the-iconic-stranger-things-intro-theme/"
+   },
+   {
+    "title": "Roland Articles: the synths of the Stranger Things theme (quotes Michael Stein)",
+    "url": "https://articles.roland.com/?p=73593"
    }
   ],
   "references": [],
@@ -2616,7 +2623,7 @@ export const LIBRARY = [
   ],
   "history": [
    "Factory preset 11 of the DX7, seen as the best-known synth preset of the 80s.",
-   "According to a study (Lavengood, 2019) it was on 61% of the 1986 R&B number-one hits.",
+   "According to a study (Lavengood, 2019, Journal of Popular Music Studies) it was on 61% of the 1986 R&B number-one hits, 40% of the country number-one hits and 39% of the Billboard Hot 100 number-one hits.",
    "On several Whitney Houston songs it is disputed whether you hear a DX7, a modified Rhodes or both."
   ],
   "gear": [

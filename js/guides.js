@@ -1146,8 +1146,8 @@ export const GUIDES = [
     concepts: ['arpeggiator', 'mixer', 'random'],
     steps: [
       next('An 80s sound from 2016',
-        'The title music of Stranger Things was made by Kyle Dixon and Michael Stein of the band Survive. Its pulsing line was played on a small analog synth, a Roland SH-2. Tap Next to start.',
-        'The line is one chord, played note by note in a fast, even pattern. A module that does that is called an arpeggiator. Here it is the Arp.'),
+        'The title music of Stranger Things was made by Kyle Dixon and Michael Stein of the band Survive, with about 25 synthesizers. Tap Next to start.',
+        'Accounts differ on which synth plays the pulsing line. A Roland article that quotes Michael Stein says he played the arpeggio by hand on an old Oberheim, and the rolling bass came from a small Roland SH-2; many tutorials credit the whole line to the SH-2. The line is one chord, played note by note in a fast, even pattern. Here a module does that for us: the Arp (arpeggiator).'),
       add('output', 'out', 'Add the Output',
         'Tap + and choose Output.',
         'Start where the sound ends.'),
@@ -1159,7 +1159,7 @@ export const GUIDES = [
         'The first of two oscillators.'),
       set('v1', 'wave', v => v === 'square', 'Set it to Square',
         'Tap the VCO\'s Wave button until it shows the square: the line that jumps between high and low.',
-        'A square wave sounds hollow and woody. The SH-2 line has that character.'),
+        'A square wave sounds hollow and woody, a good match for the line in the intro.'),
       cable(['arp', 'pitch'], ['v1', 'pitch'], 'Connect Arp Pitch → VCO Pitch',
         'Patch the Arp\'s Pitch into the VCO\'s Pitch input.',
         'The VCO now plays whatever note the Arp is on.'),
@@ -1746,7 +1746,7 @@ export const GUIDES = [
     steps: [
       next('The sound of 80s ballads',
         'The Yamaha DX7 came out in 1983. Its factory preset "E.PIANO 1" became the best-known synth sound of the decade: a glassy, bell-like attack with a soft body. Tap Next to start.',
-        'A 2019 study by Lavengood found it on 61% of the 1986 R&B number-one hits and 42% of the top country hits. You hear it in the Twin Peaks theme. On several Whitney Houston songs it is disputed whether it is a DX7, a modified Rhodes or both.'),
+        'A 2019 study by Megan Lavengood found it on 61% of the 1986 R&B number-one hits, 40% of the country number-one hits and 39% of the pop number-one hits. You hear it in the Twin Peaks theme. On several Whitney Houston songs it is disputed whether it is a DX7, a modified Rhodes or both.'),
       next('How FM works',
         'The DX7 does not filter a bright wave like a Moog. It uses FM: one oscillator (the modulator) wobbles the pitch of another (the carrier) so fast that you no longer hear a wobble, but new overtones. Tap Next.',
         'The more the modulator bends the carrier, the brighter the sound. If that amount fades over time, the tone starts bright and gets soft, like a struck tine. The DX7 calls its oscillators "operators" and has 6 of them. E.PIANO 1 uses three modulator → carrier pairs; we build two: one for the metallic "tine", one for the warm body.'),

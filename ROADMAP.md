@@ -153,3 +153,7 @@ Five library entries had only a story card, because `Idea/patches.json` gives no
 - **Thriller** (Michael Jackson, 1982): open. The entry is about the "Frog 13" sound of a Casio keyboard, which is a short stab in the breakdown, not the famous bassline (ARP 2600 according to MusicRadar). No source found gives the notes of either part.
 - **Angel**, **Tour de France**: possible in part; not started.
 - **THX Deep Note**: not possible (about 30 voices, the app has 8).
+
+## Fact check (2026-11-23)
+- **Lavengood 2019** (Journal of Popular Music Studies): E. PIANO 1 on 61 % of the 1986 R&B number-one hits is right; the country figure is 40 % (we had 42 %), the Hot 100 figure 39 %. Fixed in the DX7 guide and library card.
+- **Roland SH-2 in Stranger Things**: Roland's own article, quoting Michael Stein, credits the SH-2 with the bassline and says the arpeggio was played by hand on an Oberheim; tutorials credit the arpeggio to the SH-2. Guide and library card now say that accounts differ.
