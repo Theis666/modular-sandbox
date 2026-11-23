@@ -42,7 +42,7 @@ Controls after "More:" sit on the module's second page: the Main / More tabs und
 | Module | Inputs | Outputs | Controls |
 |---|---|---|---|
 | Keyboard | – | Pitch, Gate, Vel, Mod | Glide, Voices (1–8, ADR 0008); More: Unison (1–4), Steal (Oldest/Lowest/Highest/None), Spread; voice lights |
-| Sequencer | Clock, Transp | Pitch, Gate, Acc | 8 step pitches, 8 step on/off buttons (rests), Tempo, Length, Run; More: Steps (1–8), Direction (→ ← ↔ ?), Slide and Accent per step |
+| Sequencer | Clock, Transp | Pitch, Gate, Acc | 16 step pitches and 16 step on/off buttons (rests), shown eight at a time with the 1–8 / 9–16 buttons; Tempo, Length, Run; More: Steps (1–16, default 8), Direction (→ ← ↔ ?), Slide and Accent per step (also eight at a time) |
 | Arp | Clock | Pitch, Gate | Mode (↑ ↓ ↑↓ ↓↑ ? ~), Octaves (1–3), Tempo, Speed, Start, Hold; More: Length |
 | Clock | – | Clock, Beat | Tempo, Pulses (1/8, 1/16), Swing, Run |
 | VCO | Pitch, FM, Lin, PWM, Sync | Out, Sub | Wave, Octave, Fine, FM Amt; More: Ratio, Width, Lin FM, Drift; live wave display. With AudioWorklet: band-limited (PolyBLEP), else the built-in oscillator (no Width/Lin/Sync/Sub/Drift) |
@@ -145,3 +145,10 @@ Pitch convention: 0 = C3, one unit = one octave. Monophonic by default, last-not
 - **Inside another app's viewer** (the page runs in an iframe, e.g. the Artifact viewer): the host keeps clear of the notch and home bar, so the app drops its own safe-area padding (html.framed). Before, the viewer reported large insets and the app showed an empty band above the top bar and below the keys.
 - **Battery and heat**: live displays redraw 30 times a second and only for modules on screen (IntersectionObserver); cable and LED brightness updates 15 times a second in 10 steps and is written only when the step changes; the guide checks its frame 20 times a second; the frame's pulse animates only the opacity of a glow layer. When the app goes to the background (other app, other tab, screen off) the audio context is suspended unless a recording runs, and resumes on return. Measured with the Stranger Things patch (13 modules, 17 cables): script time per frame 2.3 → 0.9 ms, cable/LED style writes about 1100 → 100 per second.
 - **Sound that stops**: iOS interrupts web audio (calls, Siri, notification sounds, other apps playing, lock screen, new headphones) and allows it to start again only inside a touch. The app tries to resume when it comes back to the front, and again on every touch or key until the sound runs. If the sound is still stopped while the app is in front, a message says "The phone paused the sound. Tap anywhere to turn it back on."; it disappears once the sound runs.
+
+## Sequencer with 16 steps
+- The Sequencer has 16 steps. The panel shows eight at a time: **1–8** and **9–16** above the steps switch between them, on the Main page (notes, on/off) and on the More page (slide, accent). The choice is saved with the patch (`ui.bank`).
+- A small red light on 1–8 or 9–16 shows which eight are playing. While Steps (More page) is 8 or less, the loop never reaches 9–16 and that button is dimmed.
+- Steps defaults to 8, so every older patch and guide plays exactly as before; steps 9–16 start with the same notes as 1–8.
+- A guide step on a step that is not shown points at the right 1–8 / 9–16 button first (like the Main / More tabs).
+

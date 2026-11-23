@@ -112,29 +112,30 @@ export const MODULES = {
     name: 'Sequencer', hp: 14, accent: '#f2c14e',
     info: {
       title: 'Sequencer',
-      text: 'A sequencer is a robot that plays a keyboard for you. It walks through 8 steps in a loop. Each step has its own note, set with the eight small knobs, and a light button above it that switches the step on or off (an off step is a rest). For every step that is on it sends a Pitch and a short Gate, exactly like the Keyboard does.',
+      text: 'A sequencer is a robot that plays a keyboard for you. It walks through its steps in a loop: 8 at first, up to 16 (Steps, on the More page). Each step has its own note, set with a small knob, and a light button above it that switches the step on or off (an off step is a rest). The buttons 1–8 and 9–16 show the first or the second eight steps. For every step that is on it sends a Pitch and a short Gate, exactly like the Keyboard does.',
       tryThis: 'Press Run, then turn the step knobs while it plays. Turn Length down for short, plucky notes and up for long ones.'
     },
     controls: [
-      ...Array.from({ length: 8 }, (_, i) => ({
-        id: 's' + (i + 1), label: String(i + 1), min: 0, max: 24, def: [0, 12, 7, 0, 3, 12, 10, 7][i], step: 1, unit: 'st', small: true,
+      // 16 steps, shown eight at a time (bank 0: steps 1–8, bank 1: steps 9–16)
+      ...Array.from({ length: 16 }, (_, i) => ({
+        id: 's' + (i + 1), label: String(i + 1), min: 0, max: 24, def: [0, 12, 7, 0, 3, 12, 10, 7][i % 8], step: 1, unit: 'st', small: true, bank: i >> 3,
         info: 'The note of step ' + (i + 1) + ', in semitones above the lowest note. 12 semitones is one octave up.'
       })),
-      ...Array.from({ length: 8 }, (_, i) => ({
-        id: 'g' + (i + 1), label: 'Step ' + (i + 1), type: 'toggle', def: 1, small: true, stepGate: i + 1,
+      ...Array.from({ length: 16 }, (_, i) => ({
+        id: 'g' + (i + 1), label: 'Step ' + (i + 1), type: 'toggle', def: 1, small: true, stepGate: i + 1, bank: i >> 3,
         info: 'Switches step ' + (i + 1) + ' on or off. An off step is a rest: no Gate, so no note, but the sequencer still counts it.'
       })),
       { id: 'tempo', label: 'Tempo', min: 40, max: 240, def: 110, step: 1, unit: 'bpm', info: 'Speed in BPM (beats per minute). The sequencer plays two steps per beat.' },
       { id: 'len', label: 'Length', min: 0.05, max: 0.95, def: 0.5, info: 'How long each Gate stays ON, as a part of one step. Short = staccato, long = legato.' },
       { id: 'run', label: 'Run', type: 'toggle', def: 0, info: 'Starts and stops the sequencer.' },
-      { id: 'last', label: 'Steps', expert: true, min: 1, max: 8, def: 8, step: 1, unit: 'n', info: 'How many steps the loop has: at 5 it plays steps 1 to 5 and starts again. Odd lengths against an even beat make lines that shift and surprise.' },
+      { id: 'last', label: 'Steps', expert: true, min: 1, max: 16, def: 8, step: 1, unit: 'n', info: 'How many steps the loop has: at 5 it plays steps 1 to 5 and starts again; at 16 it plays all sixteen (set steps 9–16 with the 9–16 button). Odd lengths against an even beat make lines that shift and surprise.' },
       { id: 'dir', label: 'Direction', expert: true, type: 'select', options: ['fwd', 'back', 'pingpong', 'random'], labels: ['→', '←', '↔', '?'], def: 'fwd', info: 'The order of the steps: → forward, ← backward, ↔ forward and back, ? a random step each time.' },
-      ...Array.from({ length: 8 }, (_, i) => ({
-        id: 'sl' + (i + 1), label: (i + 1) + '~', full: 'Slide ' + (i + 1), type: 'toggle', def: 0, expert: true, mini: true,
+      ...Array.from({ length: 16 }, (_, i) => ({
+        id: 'sl' + (i + 1), label: (i + 1) + '~', full: 'Slide ' + (i + 1), type: 'toggle', def: 0, expert: true, mini: true, bank: i >> 3,
         info: 'Slide on step ' + (i + 1) + ': the pitch glides into this step from the one before, and the note is tied (no new attack). This is the rubbery sound of acid basslines.'
       })),
-      ...Array.from({ length: 8 }, (_, i) => ({
-        id: 'ac' + (i + 1), label: (i + 1) + '!', full: 'Accent ' + (i + 1), type: 'toggle', def: 0, expert: true, mini: true,
+      ...Array.from({ length: 16 }, (_, i) => ({
+        id: 'ac' + (i + 1), label: (i + 1) + '!', full: 'Accent ' + (i + 1), type: 'toggle', def: 0, expert: true, mini: true, bank: i >> 3,
         info: 'Accent on step ' + (i + 1) + ': the Acc output is 1 during this step and 0 otherwise. Patch Acc into a VCA or VCF CV to make accented steps louder or brighter.'
       }))
     ],
@@ -153,7 +154,7 @@ export const MODULES = {
       const acc = ctx.createConstantSource(); acc.offset.value = 0; acc.start();
       const gate = new GateOut();
       let pos = -1, dirSign = 1, next = 0, timer = null, lastClock = -10, tied = false;
-      const last = () => Math.max(1, Math.min(8, Math.round(p.last || 8)));
+      const last = () => Math.max(1, Math.min(16, Math.round(p.last || 8)));
       const advance = () => {
         const n = last();
         if (p.dir === 'random') return (pos = Math.floor(Math.random() * n));

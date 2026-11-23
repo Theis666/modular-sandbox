@@ -82,8 +82,14 @@ export function initGuide(api) {
       }
       case 'set': {
         const el = modEl(s.mod); const box = el && el.querySelector(`[data-ctl="${s.param}"]`);
-        // the control sits on the other page of the module (ADR 0010): point at that page's tab first
-        if (box && !box.offsetParent && el.querySelector('.pages')) return [el.querySelector(`.pages [data-page="${box.closest('.controls.expert') ? 1 : 0}"]`)];
+        if (box && !box.offsetParent) {
+          // the control sits on the other page of the module (ADR 0010): point at that page's tab first
+          const more = !!box.closest('.controls.expert');
+          if (el.querySelector('.pages') && el.classList.contains('expanded') !== more) return [el.querySelector(`.pages [data-page="${more ? 1 : 0}"]`)];
+          // a sequencer step in the eight that are not shown: point at the 1–8 / 9–16 button
+          const bank = box.closest('[data-bank]');
+          if (bank) return [el.querySelector(`.banks [data-bank="${bank.dataset.bank}"]`)];
+        }
         return [box && (box.querySelector('.knob, .sel, .tog') || box)];
       }
       case 'play': return [document.body.classList.contains('keys-folded') ? $('#kbdShow') : $('#keys')];

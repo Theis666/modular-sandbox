@@ -120,7 +120,7 @@ function selFace(c, v) {
 // ---------- modules ----------
 const modById = id => S.modules.find(m => m.id === id);
 const voices = initVoices({ S, MODULES, engine, modById });
-const afterParam = (m, id, v) => { voices.set(m, id, v); if (m.type === 'keyboard' && id === 'voices') voices.rebuild(); cpuCheck(); };
+const afterParam = (m, id, v) => { if (id === 'last' && m.el.querySelector('.banks')) showBank(m); voices.set(m, id, v); if (m.type === 'keyboard' && id === 'voices') voices.rebuild(); cpuCheck(); };
 
 function addModule(type, params, id, opts = {}) {
   const def = MODULES[type]; if (!def) return null;
@@ -140,7 +140,10 @@ function addModule(type, params, id, opts = {}) {
 
 function makeHooks(m) {
   return {
-    step(s) { m.el.querySelectorAll('.step-led').forEach((l, i) => l.classList.toggle('on', i === s)); },
+    step(s) {
+      m.el.querySelectorAll('.step-led').forEach((l, i) => l.classList.toggle('on', i === s));
+      m.el.querySelectorAll('.banks button').forEach(x => x.classList.toggle('playing', s >= 0 && +x.dataset.bank === s >> 3));
+    },
     rec(on, node) { on ? startRecording(m, node) : stopRecording(m); }
   };
 }
@@ -285,7 +288,7 @@ function renderModule(m) {
   const ctl = c => {
     const approx = provOf(m.id, c.id) === 'inferred' ? '<span class="approx" title="Starting value, not from the source">≈</span>' : '';
     if (c.type === 'select') return `<div class="ctl" data-ctl="${c.id}"><button class="sel${c.icons ? ' icon' : ''}" aria-label="${c.label}: ${c.labels[c.options.indexOf(m.params[c.id])]}">${selFace(c, m.params[c.id])}</button><label>${approx}${c.label}</label></div>`;
-    if (c.type === 'toggle') return `<div class="ctl${c.mini ? ' mini' : ''}" data-ctl="${c.id}"><button class="tog${m.params[c.id] ? ' on' : ''}" aria-label="${c.full || c.label}"><i></i>${c.label}</button></div>`;
+    if (c.type === 'toggle') return `<div class="ctl${c.mini ? ' mini' : ''}" data-ctl="${c.id}"${c.bank !== undefined ? ` data-bank="${c.bank}"` : ''}><button class="tog${m.params[c.id] ? ' on' : ''}" aria-label="${c.full || c.label}"><i></i>${c.label}</button></div>`;
     return `<div class="ctl${c.small ? ' small' : ''}" data-ctl="${c.id}"><div class="knob"><div class="ind"></div></div><label>${approx}${c.label}</label></div>`;
   };
   const jack = (j, dir) => `<div class="jack-wrap ${dir} k-${j.kind}" data-jack="${j.id}" data-dir="${dir}" data-kind="${j.kind}"><div class="jack"></div><label>${j.label}</label></div>`;
@@ -293,11 +296,12 @@ function renderModule(m) {
   const expert = rest.filter(c => c.expert); // ADR 0010: shown instead of the main controls when the module is expanded (MORE tab)
   const gateOf = i => def.controls.find(c => c.stepGate === i + 1);
   // a step: its on/off button (with the running light inside) above its note knob
-  const stepCol = (c, i) => { const g = gateOf(i); return `<div class="stepcol">${g ? `<div class="ctl stepgate" data-ctl="${g.id}"><button class="tog step${m.params[g.id] ? ' on' : ''}" aria-label="Step ${i + 1} on or off"><i class="step-led"></i></button></div>` : '<i class="step-led"></i>'}${ctl(c)}</div>`; };
+  const stepCol = (c, i) => { const g = gateOf(i); return `<div class="stepcol"${c.bank !== undefined ? ` data-bank="${c.bank}"` : ''}>${g ? `<div class="ctl stepgate" data-ctl="${g.id}"><button class="tog step${m.params[g.id] ? ' on' : ''}" aria-label="Step ${i + 1} on or off"><i class="step-led"></i></button></div>` : '<i class="step-led"></i>'}${ctl(c)}</div>`; };
   el.innerHTML = `
     <i class="screw tl"></i><i class="screw tr"></i><i class="screw bl"></i><i class="screw br"></i>
     <div class="mhead"><button class="mname" aria-label="Module menu; drag to move"></button><button class="ibtn" aria-label="Module info">i</button></div>
     ${expert.length ? `<div class="pages" role="tablist" aria-label="Control pages"><button data-page="0" role="tab" class="${m.ui.expanded ? '' : 'on'}" aria-selected="${!m.ui.expanded}">Main</button><button data-page="1" role="tab" class="${m.ui.expanded ? 'on' : ''}" aria-selected="${!!m.ui.expanded}">More</button></div>` : '<div class="stripe"></div>'}
+    ${steps.length > 8 ? `<div class="banks" role="tablist" aria-label="Which steps to show"><button data-bank="0" role="tab"><i></i>1–8</button><button data-bank="1" role="tab"><i></i>9–16</button></div>` : ''}
     ${def.led ? '<div class="led" data-led="' + def.led + '"></div>' : ''}
     ${def.display ? '<canvas class="disp" aria-hidden="true"></canvas>' : ''}
     ${steps.length ? `<div class="steps">${steps.map(stepCol).join('')}</div>` : ''}
@@ -308,8 +312,19 @@ function renderModule(m) {
       ${def.outputs.length ? `<div class="outs">${def.outputs.map(j => jack(j, 'out')).join('')}</div>` : ''}
     </div>`;
   def.controls.forEach(c => updateCtl(m, c, el));
+  if (steps.length > 8) showBank(m, el);
   return el;
 }
+
+// Sequencer with 16 steps: one bank of eight is shown at a time (both pages follow it).
+// The tab of the bank that is playing has a small light; a bank the loop does not reach (Steps ≤ 8) is dimmed.
+function showBank(m, el = m.el) {
+  const b = m.ui.bank ? 1 : 0;
+  el.classList.toggle('bank1', !!b);
+  el.querySelectorAll('.banks button').forEach(x => { const on = +x.dataset.bank === b; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
+  const unused = el.querySelector('.banks [data-bank="1"]'); if (unused) unused.classList.toggle('unused', (m.params.last || 8) <= 8);
+}
+function setBank(m, b) { m.ui.bank = b ? 1 : 0; showBank(m); autosave(); }
 
 function updateCtl(m, c, el = m.el) {
   const box = el.querySelector(`[data-ctl="${c.id}"]`); if (!box) return;
@@ -548,7 +563,7 @@ const touches = new Map();
 rackWrap.addEventListener('touchstart', e => {
   if (e.touches.length !== 1 || S.infoMode || !(e.target instanceof Element)) return;
   const t = e.target;
-  if (t.closest('.ibtn, .pages, .sel, .tog')) return;
+  if (t.closest('.ibtn, .pages, .banks, .sel, .tog')) return;
   const p = e.touches[0];
   if (t.closest('.knob, .jack-wrap, .mhead') || (t.closest('.ctl') && t.closest('.ctl').querySelector(':scope > .knob'))
     || (!t.closest('button') && jackNear(p.clientX, p.clientY))) e.preventDefault();
@@ -618,6 +633,7 @@ rack.addEventListener('click', e => {
   else if (t.closest('.tog')) setParam(m, c.id, m.params[c.id] ? 0 : 1);
   else if (t.closest('.ibtn')) showModuleInfo(m);
   else if (t.closest('.pages button')) setExpanded(m, t.closest('.pages button').dataset.page === '1');
+  else if (t.closest('.banks button')) setBank(m, t.closest('.banks button').dataset.bank === '1');
 });
 // A touch that starts on a cable lying over a knob or jack must not scroll the rack: the cable
 // itself would let the browser scroll, and the knob turn would be cut off.
@@ -1059,6 +1075,7 @@ function infoFor(t) {
     const kind = j.kind === 'gate' ? 'Gate' : 'Signal';
     return { title: `${m.name} · ${j.label} (${jw.dataset.dir === 'out' ? 'output' : 'input'}, ${kind})`, text: j.info };
   }
+  if (t.closest('.banks')) return { title: `${m.name} · Steps 1–8 and 9–16`, text: 'The sequencer has 16 steps but shows eight at a time, so the knobs stay big enough for a finger. 1–8 shows the first eight, 9–16 the second (on the More page too, for slide and accent). A small light marks the eight that are playing. The loop only reaches steps 9–16 when Steps (More page) is above 8; until then the 9–16 button is dimmed. Switching changes nothing in the sound.' };
   if (t.closest('.pages')) return { title: `${m.name} · Main and More`, text: `This module has two pages of controls. Main shows the controls you need most. More shows the extra controls for fine-tuning (${def.controls.filter(c => c.expert && !c.mini).map(c => c.full || c.label).join(', ')}${def.controls.some(c => c.mini) ? ', and slide and accent per step' : ''}). Switching pages changes nothing in the sound: it only shows other knobs. The values on the hidden page keep working.` };
   if (t.closest('.mhead') && !t.closest('.ibtn')) return { title: `${m.name} · Name bar`, text: 'Tap the name for the module menu (info, duplicate, remove). Drag the name to move the module to another place in the rack; drop it on the bin at the top to remove it. ↶ undoes both.' };
   const box = t.closest('.ctl');
@@ -1068,7 +1085,7 @@ function infoFor(t) {
 function showModuleInfo(m) {
   const def = MODULES[m.type];
   const controls = def.controls.filter(c => !c.small)
-    .concat(def.controls.filter(c => c.small && !c.stepGate).slice(0, 1).map(c => ({ ...c, label: 'Steps 1–8', full: null, info: 'The note of each step, in semitones above the lowest note.' })))
+    .concat(def.controls.filter(c => c.small && !c.stepGate).slice(0, 1).map(c => ({ ...c, label: 'Step knobs', full: null, info: 'The note of each step, in semitones above the lowest note. The buttons 1–8 and 9–16 show the first or the second eight steps.' })))
     .concat(def.controls.filter(c => c.stepGate).slice(0, 1).map(c => ({ ...c, label: 'Step buttons', full: null, info: 'The light button above each step knob switches that step on or off. An off step is a rest.' })));
   const name = i => i.full ? `${i.label} (${i.full})` : i.label;
   const list = (title, items) => items.length ? `<h3>${title}</h3><dl>${items.map(i => `<dt>${markAbbr(name(i))}</dt><dd>${markAbbr(i.info)}</dd>`).join('')}</dl>` : '';
@@ -1177,7 +1194,8 @@ function serialize() {
     modules: S.modules.map(m => {
       const params = { ...m.params };
       MODULES[m.type].controls.filter(c => c.transient).forEach(c => delete params[c.id]);
-      return { id: m.id, type: m.type, params, ...(m.ui && m.ui.expanded ? { ui: { expanded: true } } : {}) };
+      const ui = { ...(m.ui && m.ui.expanded ? { expanded: true } : {}), ...(m.ui && m.ui.bank ? { bank: 1 } : {}) };
+      return { id: m.id, type: m.type, params, ...(Object.keys(ui).length ? { ui } : {}) };
     }),
     cables: S.cables.map(c => ({ from: { ...c.from }, to: { ...c.to } })),
     ...(S.meta ? { meta: S.meta } : {})
