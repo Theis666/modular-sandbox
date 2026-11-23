@@ -324,7 +324,14 @@ function showBank(m, el = m.el) {
   el.querySelectorAll('.banks button').forEach(x => { const on = +x.dataset.bank === b; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
   const unused = el.querySelector('.banks [data-bank="1"]'); if (unused) unused.classList.toggle('unused', (m.params.last || 8) <= 8);
 }
-function setBank(m, b) { m.ui.bank = b ? 1 : 0; showBank(m); autosave(); }
+function setBank(m, b) {
+  m.ui.bank = b ? 1 : 0; showBank(m); autosave();
+  // 9–16 only play when the loop is longer than 8: opening them on a loop of exactly 8 (the default) makes it 16,
+  // so what you set there is heard. Shorter loops (odd lengths on purpose) are left alone, with a hint.
+  if (!b || (m.params.last || 8) > 8 || document.body.classList.contains('guiding')) return;
+  if ((m.params.last || 8) === 8) { setParam(m, 'last', 16); toast('Steps is now 16, so the loop plays steps 9–16 too. Change it on the More page.', 3500); }
+  else toast(`Steps 9–16 only play when Steps (More page) is above 8. It is ${m.params.last} now.`, 3500);
+}
 
 function updateCtl(m, c, el = m.el) {
   const box = el.querySelector(`[data-ctl="${c.id}"]`); if (!box) return;

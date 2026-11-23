@@ -36,7 +36,7 @@ MIDI, Vital export. (Polyphony, effects and the Scope module were added later.) 
 - **Touch targets**: knobs have an invisible ring (about 44 pt on iPhone); a tap up to 14 px beside a jack's edge snaps to that jack, preferring one that completes a pending cable; small buttons ("i", wave, Run) have enlarged invisible hit areas. A touch that turns into a scroll never leaves a half-made cable.
 - Jack kinds ([ADR 0004](docs/adr/0004-gate-is-an-event.md)): *signal* (audio/CV/pitch) and *gate*.
 
-## Modules (24 modules)
+## Modules (25 modules)
 Controls after "More:" sit on the module's second page: the Main / More tabs under the module name switch pages (ADR 0010). The first three times More is opened, a message says what the page holds. Switching pages changes nothing in the sound. New ADSR and VCA modules start exponential; patches made before a control existed load with its `legacy` value, so they sound unchanged.
 
 | Module | Inputs | Outputs | Controls |
@@ -53,6 +53,7 @@ Controls after "More:" sit on the module's second page: the Main / More tabs und
 | Ring | A, B | Out | – (A × B) |
 | VCA | In, CV | Out | Level, CV Amt; More: Response (Exp/Lin). Negative CV keeps it closed |
 | ADSR | Gate | Out | A, D, S, R; More: Curve (Exp/Lin); live envelope display |
+| Clap | Gate | Out | Claps (1–6 spikes), Spread (3–40 ms between them), Decay (tail after the last spike). Gate OFF does nothing: a clap always plays to the end |
 | LFO | Reset | Out | Wave (6 shapes), Rate, Depth; More: Fade; live movement display |
 | S&H | In, Gate | Out | Source (Random/In) |
 | Slew | In | Out | Rise, Fall |
@@ -150,5 +151,13 @@ Pitch convention: 0 = C3, one unit = one octave. Monophonic by default, last-not
 - The Sequencer has 16 steps. The panel shows eight at a time: **1–8** and **9–16** above the steps switch between them, on the Main page (notes, on/off) and on the More page (slide, accent). The choice is saved with the patch (`ui.bank`).
 - A small red light on 1–8 or 9–16 shows which eight are playing. While Steps (More page) is 8 or less, the loop never reaches 9–16 and that button is dimmed.
 - Steps defaults to 8, so every older patch and guide plays exactly as before; steps 9–16 start with the same notes as 1–8.
+- Tapping 9–16 while Steps is exactly 8 sets Steps to 16 (with a message), so what you set there is heard. A shorter loop is left alone and a message says 9–16 only play above 8. Not during a guide.
+- The 1–8 / 9–16 buttons are a little taller than the Main / More tabs, with a larger invisible touch area (iPhone feedback 2026-11-23: too small to hit).
 - A guide step on a step that is not shown points at the right 1–8 / 9–16 button first (like the Main / More tabs).
 
+
+## Clap module and Hand clap guide
+- The Clap is an envelope (a control signal from 0 to 1, no sound of its own). Each Gate ON fires `Claps` spikes, `Spread` apart; each spike jumps to 1 and falls with a time constant of a quarter of Spread, the last one with a quarter of Decay (98% gone after Decay). A new Gate cuts the old clap off where it is.
+- It is copied per voice like the ADSR.
+- Guide "Hand clap" (drums, level 2): Noise (Level up) → VCF (BP, 700 Hz–1 kHz, Reso down) → VCA, Keyboard Gate → Clap → VCA CV; Claps down to 1 and back, Spread looser, then a Reverb.
+- Render test `module:clap` (tools/render-tests.js) measures the guide's patch without the reverb.

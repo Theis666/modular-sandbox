@@ -14,6 +14,14 @@ export function cases() {
     const poly = kb && kb.params && kb.params.voices > 1;
     list.push({ id: 'library:' + e.id, patch: e.patch, notes: poly ? [48, 52, 55] : [48] });
   }
+  // modules that no Example or Classic sound uses yet
+  const mod = (id, type, params = {}) => ({ id, type, params });
+  const cab = (fm, fj, tm, tj) => ({ from: { module: fm, jack: fj }, to: { module: tm, jack: tj } });
+  list.push({ id: 'module:clap', notes: [48], patch: { format: 'modular-synth-sandbox', version: 1, name: 'Clap test',
+    modules: [mod('kb', 'keyboard'), mod('noise', 'noise', { level: 1 }), mod('vcf', 'vcf', { type: 'bandpass', cutoff: 900, res: 0 }), mod('clap', 'clap'),
+      mod('vca', 'vca'), mod('out', 'output')],
+    cables: [cab('kb', 'gate', 'clap', 'gate'), cab('noise', 'out', 'vcf', 'in'), cab('vcf', 'out', 'vca', 'in'),
+      cab('clap', 'out', 'vca', 'cv'), cab('vca', 'out', 'out', 'in')] } });
   return list;
 }
 

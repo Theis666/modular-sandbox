@@ -563,12 +563,12 @@ html.framed #top, html.framed #kbd { padding-left: 8px; padding-right: 8px; }
 html.framed #rackWrap { padding-left: 0; padding-right: 0; }
 
 /* sequencer with 16 steps: eight are shown at a time, on both pages */
-.banks { display: flex; justify-content: center; gap: 4px; margin: 0 8% 3px; }
-.banks button { flex: 1; max-width: calc(var(--hp) * 3.2); display: flex; align-items: center; justify-content: center; gap: 3px; padding: 1px 0; font-size: max(7px, calc(var(--hp) * .5)); font-weight: 800;
+.banks { display: flex; justify-content: center; gap: 6px; margin: 1px 6% 5px; }
+.banks button { flex: 1; max-width: calc(var(--hp) * 3.2); display: flex; align-items: center; justify-content: center; gap: 3px; padding: 3px 0; font-size: max(8px, calc(var(--hp) * .6)); font-weight: 800;
   font-variant-numeric: tabular-nums; color: #e8eaed; background: #1a1c1f; border-radius: 3px; opacity: .55; position: relative; }
-.banks button::after { content: ""; position: absolute; inset: -5px -2px; }
+.banks button::after { content: ""; position: absolute; inset: -9px -3px; }
 .banks button.on { opacity: 1; box-shadow: inset 0 -2px 0 var(--accent); }
-.banks button.unused:not(.on) { opacity: .3; }
+.banks button.unused:not(.on) { opacity: .4; }
 .banks button i { width: 5px; height: 5px; border-radius: 50%; background: #4a2422; }
 .banks button.playing i { background: #ff4d47; box-shadow: 0 0 6px #ff4d47; }
 .module:not(.bank1) :is(.stepcol, .ctl)[data-bank="1"], .module.bank1 :is(.stepcol, .ctl)[data-bank="0"] { display: none !important; }

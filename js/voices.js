@@ -3,7 +3,7 @@
 // voice, wired exactly like the visible one. Effects and the Output stay single: all voices
 // meet there, turned down a little so chords do not get louder and louder.
 // The visible module is voice 0; its jacks, scope, lights and envelope display show voice 0.
-export const POLY_TYPES = new Set(['vco', 'noise', 'vcf', 'vca', 'adsr', 'lfo', 'mixer', 'dx', 'fold', 'ring', 'atten', 'slew', 'quant', 'sh']);
+export const POLY_TYPES = new Set(['vco', 'noise', 'vcf', 'vca', 'adsr', 'clap', 'lfo', 'mixer', 'dx', 'fold', 'ring', 'atten', 'slew', 'quant', 'sh']);
 
 export function initVoices({ S, MODULES, engine, modById }) {
   let built = null; // { copies: Map(modId -> [inst for voice 1..n-1]), undo: [fn], region }

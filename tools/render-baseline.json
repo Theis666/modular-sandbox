@@ -53,5 +53,10 @@
   "peak": 0.7725,
   "rms": 0.1565,
   "centroid": 9967
+ },
+ "module:clap": {
+  "peak": 0.2599,
+  "rms": 0.0133,
+  "centroid": 4719
  }
 }

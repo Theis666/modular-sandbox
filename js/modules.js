@@ -505,6 +505,39 @@ export const MODULES = {
     }
   },
 
+  // Hand-clap envelope: a few very short spikes, then a longer tail (like the clap of a TR-808)
+  clap: {
+    name: 'Clap', hp: 6, accent: '#56b870', led: 'out',
+    info: {
+      title: 'Clap · Hand-clap envelope',
+      text: 'A hand clap is not one hit but several: the hands of a group never meet at exactly the same moment. This envelope fires a few very short spikes in quick succession and then a longer tail. Like the ADSR it makes no sound: it is a control signal for a VCA that lets Noise through.',
+      tryThis: 'Noise → VCF (BP, about 1 kHz) → VCA, and the Clap\'s Out into the VCA\'s CV. Set Claps to 1 and it is a plain noise hit; turn Spread up and the clappers get sloppy.'
+    },
+    controls: [
+      { id: 'claps', label: 'Claps', min: 1, max: 6, def: 4, step: 1, unit: 'n', info: 'How many spikes one Gate fires. The last one gets the long tail. 1 is a single noise hit, 3 to 5 sound like a group clapping.' },
+      { id: 'spread', label: 'Spread', min: 0.003, max: 0.04, def: 0.011, curve: 'exp', unit: 's', info: 'The time between the spikes. Around 10 ms (milliseconds) is tight, like a drum machine. Longer sounds like a loose group of people; very long becomes a flam, separate hits.' },
+      { id: 'decay', label: 'Decay', min: 0.03, max: 1.5, def: 0.25, curve: 'exp', unit: 's', info: 'How long the tail after the last spike rings out: short is a dry clap, long sounds like a clap in a hall.' }
+    ],
+    inputs: [{ id: 'gate', label: 'Gate', kind: 'gate', info: 'Each time the Gate turns ON the clap fires once. When it turns OFF nothing happens: a clap always plays to the end.' }],
+    outputs: [{ id: 'out', label: 'Out', kind: 'signal', sig: 'cv', info: 'The clap shape as a control signal from 0 to 1. Patch it into a VCA\'s CV.' }],
+    create(ctx, p) {
+      const src = ctx.createConstantSource(); src.offset.value = 0; src.start();
+      const g = src.offset;
+      const onGate = (on, t) => {
+        if (!on) return;
+        const n = Math.max(1, Math.min(6, Math.round(p.claps || 1))), sp = p.spread;
+        if (g.cancelAndHoldAtTime) g.cancelAndHoldAtTime(t); else g.cancelScheduledValues(t);
+        for (let i = 0; i < n; i++) {
+          const ti = t + i * sp, last = i === n - 1;
+          // every spike jumps to full and falls fast; the last one falls slowly (98% gone after Decay)
+          g.setValueAtTime(1, ti);
+          g.setTargetAtTime(0, ti, last ? Math.max(0.005, p.decay / 4) : sp / 4);
+        }
+      };
+      return { inputs: { gate: onGate }, outputs: { out: src }, set() {}, destroy() { src.stop(); disconnectAll(src); } };
+    }
+  },
+
   lfo: {
     name: 'LFO', hp: 6, accent: '#a46be0', led: 'out', display: 'roll',
     info: {
@@ -1160,7 +1193,7 @@ export const MODULES = {
   }
 };
 
-export const MODULE_ORDER = ['keyboard', 'sequencer', 'arp', 'clock', 'vco', 'noise', 'dx', 'vcf', 'fold', 'ring', 'vca', 'adsr', 'lfo', 'sh', 'slew', 'quant', 'atten', 'mixer', 'trigger', 'delay', 'chorus', 'reverb', 'scope', 'output'];
+export const MODULE_ORDER = ['keyboard', 'sequencer', 'arp', 'clock', 'vco', 'noise', 'dx', 'vcf', 'fold', 'ring', 'vca', 'adsr', 'clap', 'lfo', 'sh', 'slew', 'quant', 'atten', 'mixer', 'trigger', 'delay', 'chorus', 'reverb', 'scope', 'output'];
 
 // Values for a module loaded from a patch: controls that are newer than the patch get their
 // `legacy` value (how the module sounded before the control existed), not the new default (ADR 0010).

@@ -157,3 +157,7 @@ Five library entries had only a story card, because `Idea/patches.json` gives no
 ## Fact check (2026-11-23)
 - **Lavengood 2019** (Journal of Popular Music Studies): E. PIANO 1 on 61 % of the 1986 R&B number-one hits is right; the country figure is 40 % (we had 42 %), the Hot 100 figure 39 %. Fixed in the DX7 guide and library card.
 - **Roland SH-2 in Stranger Things**: Roland's own article, quoting Michael Stein, credits the SH-2 with the bassline and says the arpeggio was played by hand on an Oberheim; tutorials credit the arpeggio to the SH-2. Guide and library card now say that accounts differ.
+
+## Drum round (2026-11-23)
+- **Clap module**: an envelope that fires 1–6 very short spikes (Spread 3–40 ms apart) and then a tail (Decay), like the clap of a TR-808. Patched to a VCA after band-passed Noise it makes a hand clap. **Done**, new guide "Hand clap" in the drum group.
+- Next: patch sharing via link.
