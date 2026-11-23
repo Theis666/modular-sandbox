@@ -104,6 +104,7 @@ Pitch convention: 0 = C3, one unit = one octave. Monophonic by default, last-not
 ## Storage & export
 - Autosave of the current patch; named local patch list.
 - Export/import patch as `.json` via the iOS share sheet / file picker. Format is versioned ([ADR 0005](docs/adr/0005-own-patch-format-not-vital.md)).
+- **Share as a link** (Patches menu, js/share.js): the patch is packed into the link after `#p=` (deflate-raw + base64url, `z.`; plain JSON `j.` where the browser cannot compress). The part after `#` never reaches a server. The iOS share sheet opens; elsewhere the link is copied and shown. Opening such a link loads the patch after the saved rack, so Undo brings the own rack back; the `#p=` part is then removed from the address. A patch from a link is sanitized: only known module types, controls (values clamped to their ranges, selects must be one of their options), jacks and the Arp's held chord are kept; Classic-sound knob notes (`meta`) are not shared. Links are about 0.5–1.6 thousand characters for the built-in patches.
 - Recording: Rec on Output → stereo WAV (16-bit, device sample rate), max 5 min, then share sheet. It records the final mix after the master limiter and soft clipper, so files never clip.
 - Master bus: compressor/limiter, then a soft clipper that is neutral below 0.8 and never exceeds 1.0.
 

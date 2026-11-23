@@ -160,4 +160,4 @@ Five library entries had only a story card, because `Idea/patches.json` gives no
 
 ## Drum round (2026-11-23)
 - **Clap module**: an envelope that fires 1–6 very short spikes (Spread 3–40 ms apart) and then a tail (Decay), like the clap of a TR-808. Patched to a VCA after band-passed Noise it makes a hand clap. **Done**, new guide "Hand clap" in the drum group.
-- Next: patch sharing via link.
+- **Patch sharing via link**: Patches menu → Share as a link. The patch travels inside the link (after `#`), nothing is uploaded. **Done** (2026-11-23).

@@ -8,6 +8,7 @@ import { initVoices } from './voices.js';
 import { initEar } from './ear.js';
 import { renderPatch } from './offline.js';
 import { LIBRARY } from './library.js';
+import { encodePatch, decodePatch } from './share.js';
 import { ABBR, abbrIn, markAbbr, legendHtml } from './abbr.js';
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -1280,6 +1281,7 @@ function patchesSheet() {
     <div class="plist">${names.length ? names.map(n => `<div class="pitem mine"><button class="pload" data-my="${esc(n)}"><b>${esc(n)}</b></button><button class="pdel" data-del="${esc(n)}" aria-label="Delete">✕</button></div>`).join('') : '<p class="hint">Nothing saved yet. Your current rack is always kept automatically.</p>'}</div>
     <div class="menu">
       <button class="btn" data-a="save">Save current patch as…</button>
+      <button class="btn" data-a="link">Share as a link…</button>
       <div class="row"><button class="btn" data-a="export">Export .json</button><button class="btn" data-a="import">Import .json</button></div>
       <button class="btn" data-a="new">New empty rack</button>
       <button class="btn" data-a="intro">Show the introduction again</button>
@@ -1308,7 +1310,8 @@ function patchesSheet() {
         const n = await askText('File name', 'my-patch', 'Export'); if (!n) return;
         const blob = new Blob([JSON.stringify({ ...serialize(), name: n }, null, 2)], { type: 'application/json' });
         shareFile(new File([blob], n.replace(/[^\w-]+/g, '-') + '.json', { type: 'application/json' }));
-      } else if (act === 'import') { $('#importInput').click(); }
+      } else if (act === 'link') { shareLink(); }
+      else if (act === 'import') { $('#importInput').click(); }
       else if (act === 'new') { if (await askConfirm('Clear the rack?', 'Save or export your current patch first if you want to keep it.', 'Clear rack')) { guide.stop(); loadPatch({ format: 'modular-synth-sandbox', version: 1, modules: [], cables: [] }); toast('Empty rack. Tap + to add modules.', 3000); } }
     }
   };
@@ -1318,6 +1321,43 @@ $('#importInput').addEventListener('change', async e => {
   try { const p = JSON.parse(await f.text()); guide.stop(); if (loadPatch(p)) { closeSheet(); toast('Patch imported'); } }
   catch (err) { toast('Could not read that file.', 3000); }
 });
+// ---------- sharing a patch as a link (js/share.js) ----------
+async function shareLink() {
+  const p = serialize(); delete p.meta; // knob notes of Classic sounds stay in the app
+  const url = location.origin + location.pathname + '#p=' + await encodePatch(p);
+  try {
+    if (navigator.share) { await navigator.share({ url, title: 'Modular Sandbox patch' }); return; }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  let copied = false;
+  try { await navigator.clipboard.writeText(url); copied = true; } catch (e) {}
+  openSheet(`<h2>Link to this patch</h2>
+    <p>${copied ? 'The link is copied. ' : ''}Whoever opens it gets this rack with all cables and knob settings. The patch is inside the link itself: nothing is uploaded anywhere.</p>
+    <input class="field" id="shareUrl" readonly value="${esc(url)}">
+    <div class="row"><button class="btn" data-close>Done</button><button class="btn primary" id="copyUrl">Copy</button></div>`);
+  const inp = $('#shareUrl'); inp.onfocus = () => inp.select();
+  $('#copyUrl').onclick = async () => {
+    inp.select();
+    try { await navigator.clipboard.writeText(url); } catch (e) { try { document.execCommand('copy'); } catch (e2) {} }
+    toast('Link copied', 1500);
+  };
+}
+// a link with #p=… opens its patch. The rack you had stays one Undo away.
+async function openSharedLink() {
+  const m = /^#p=(.+)$/.exec(location.hash); if (!m) return false;
+  window.history.replaceState(null, '', location.pathname + location.search); // a reload must not open it again
+  let p = null;
+  try { p = await decodePatch(m[1]); } catch (e) {
+    toast(e.message === 'nodecompress' ? 'This browser is too old to open patch links. Update iOS, or ask for the .json file.' : 'This link does not contain a readable patch.', 4500);
+    return false;
+  }
+  if (!p) { toast('This link does not contain a readable patch.', 4000); return false; }
+  guide.stop();
+  if (!loadPatch(p)) return false;
+  toast(`Shared patch opened (${p.modules.length} modules). Undo brings back your own rack.`, 4500);
+  return true;
+}
+window.addEventListener('hashchange', () => { if (engine.ctx && S.modules) openSharedLink(); });
+
 async function shareFile(file) {
   try {
     if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: file.name }); return; }
@@ -1608,6 +1648,7 @@ $('#startBtn').addEventListener('click', async () => {
   await engine.ready; // the AudioWorklet modules must be loaded before the first VCO is built
   const saved = store.get('mss.current');
   if (!(saved && saved.modules && loadPatch(saved))) loadPatch(EXAMPLES[0]);
+  if (/^#p=/.test(location.hash)) { await new Promise(r => setTimeout(r, 350)); await openSharedLink(); } // after autosave, so Undo returns to the old rack
   setTimeout(() => intro.startOnce(), 450); // first start only: four hints with a spotlight
   requestAnimationFrame(frame);
 });
